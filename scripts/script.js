@@ -51,6 +51,7 @@ function init() {
   //  let pac man current position = pac man starting position
   let pacManCurrentPosition = pacManStartingPosition
   //  let ghosts current position = ghosts starting position - an array
+  let ghostsCurrentPositon = ghostsStartingPosition
   
 
   //functions
@@ -140,7 +141,6 @@ function init() {
 
   //  add ghosts (position, index)
   function addGhost (position, index) {
-    // see which ghost to add
     let colour
     if (index % 4 === 0) {
       colour = 'red'
@@ -155,7 +155,19 @@ function init() {
   }
 
   //  remove ghosts(position)
-  //    remove ghost class to cells[position]
+  function removeGhosts(position, index) {
+    let colour
+    if (index % 4 === 0) {
+      colour = 'red'
+    } else if (index % 4 === 1) {
+      colour = 'cyan' 
+    } else if (index % 4 === 2) {
+      colour = 'pink'
+    } else if (index % 4 === 3) {
+      colour = 'orange'
+    }
+    cells[position].classList.remove(ghostClass, colour)
+  }
 
   //  move pac man(e)
   function movePacMan(e) {
@@ -183,42 +195,54 @@ function init() {
     const currentCell = cells[pacManCurrentPosition]
     // if current position has food class
     if (currentCell.classList.contains(foodClass)) {
-      // remove food class
       currentCell.classList.remove(foodClass)
-      //add score
       score += 100
       scoreDisplay.innerText = score
     }
     // if current position has ghost class
     if (currentCell.classList.contains(ghostClass)) {
-      //lives--
       lives--
-      //livesDOM = lives
       livesDisplay.innerHTML = lives
     }
-    // if lives === 0
     lives < 0 ? endGame('lose') : null
-    // if no cells contain food end game (win)
     cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
   }
   
 
   //  set Interval - move ghosts()
-  //    loop through array:
-  //    removeghost()
-  //      if to check relative position of ghost to pac man && if square below is wall
+  function moveGhosts() {
+    const directionOptions = ['up', 'down', 'left', 'right']
+    ghostsCurrentPositon.forEach((position, index) => {
+      removeGhosts(position, index)
+      function pickDirection() {
+        let direction = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
+        //if to check if square below is wall
+        if (direction === 'right') {
+          !cells[position + 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]++ : pickDirection()
+        } else if(direction === 'left') {
+          !cells[position - 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]-- : pickDirection()
+        } else if(direction === 'up') {
+          !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection()
+        } else if(direction === 'down') {
+          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index]+= width : pickDirection()
+        }          
+        addGhost(ghostsCurrentPositon[index], index)
+      }
+      pickDirection()
+    })
   //        will need default moving if neither conditions are met
   //        ghost current postion change row and column
   //      add ghost(ghost current position)
-  //    
-
+  }
+ function playGame() {
+  const moveGhostInterval = setInterval(moveGhosts, 1000)
+ }
   //  end game(result)
   function endGame(result) {
-    if (result === 'lose') {
-      alert('you lose')
-    } else if (result === 'win') {
-      alert('you win')
-    }
+    result === 'lose' ?  alert('you lose', score) : alert('you win', score)
+    startBtn.innerText = 'restart'
+    pacManCurrentPosition = pacManStartingPosition
+    makeGrid()
   }
   //    if result === 'lose'
   //      alert you lost! and score
@@ -242,6 +266,7 @@ function init() {
   //  start button (playame)
   //  keydown (move pac man)
   document.addEventListener('keydown', movePacMan)
+  startBtn.addEventListener('click', playGame)
 
 
   //EXTRA -----
