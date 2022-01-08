@@ -1,0 +1,70 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#scores-container {
+  display: flex;
+  justify-content: space-between;
+  width: 35rem;
+}
+
+button {
+  padding: 0.2rem 1rem;
+}
+
+#grid {
+  display: grid;
+  background: black;
+}
+
+/* #grid div{
+
+} */
+
+.wall {
+  background: blue;
+}
+
+.gate {
+  background: orange;
+}
+
+.food {
+  background-image: url("../images/food.png");
+  background-size: 15%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.pac-man, .ghost {
+  background-size: cover;
+}
+.pac-man {
+  background-image: url("../images/pac-man.gif");
+}
+
+.cyan{
+  background-image: url("../images/cyan.gif");
+}
+
+.orange{
+  background-image: url("../images/orange.gif");
+}
+
+.red{
+  background-image: url("../images/red.gif");
+}
+
+.pink{
+  background-image: url("../images/pink.gif");
+}
+
+button {
+  margin-top: 1rem;
+}
