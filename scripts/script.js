@@ -52,6 +52,9 @@ function init() {
   let pacManCurrentPosition = pacManStartingPosition
   //  let ghosts current position = ghosts starting position - an array
   let ghostsCurrentPositon = ghostsStartingPosition
+  const ghostDirection = [null, null, null, null]
+  // set playing game to active
+  let playing = false
   
 
   //functions
@@ -68,8 +71,8 @@ function init() {
   //make grid
   function makeGrid() {
     // make grid based on width
-    grid.style.width = `${width * 1.5}rem`
-    grid.style.height = `${height * 1.5}rem`
+    grid.style.width = `${width * 1.25}rem`
+    grid.style.height = `${height * 1.25}rem`
     grid.style.gridTemplateRows = `repeat(${height}, 1fr)`
     grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`
     // for loop to create cells
@@ -95,9 +98,6 @@ function init() {
   }
   makeGrid()
 
-
-  //  playgame()
-  //    to wrap around all the game play functions
 
   function addWalls(position) {
     cells[position].classList.add(wallClass)
@@ -171,72 +171,95 @@ function init() {
 
   //  move pac man(e)
   function movePacMan(e) {
-    // const keys based on keycode to equal up down left right
-    const key = e.keyCode
-    const right = 39
-    const left = 37
-    const up = 38
-    const down = 40
-    // remove pac man(pac man current position)
-    removePacMan(pacManCurrentPosition)
-    // if to check direction of key, whether the next square is a wall or edge of grid
-    if (key === right && !cells[pacManCurrentPosition + 1].classList.contains(wallClass)) {
-      //pac man current position row or column change
-      pacManCurrentPosition++
-    } else if (key === left && !cells[pacManCurrentPosition - 1].classList.contains(wallClass)) {
-      pacManCurrentPosition--
-    } else if (key === up && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
-      pacManCurrentPosition -= width
-    } else if (key === down && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
-      pacManCurrentPosition += width
+    if (playing === true) {
+      // const keys based on keycode to equal up down left right
+      const key = e.keyCode
+      const right = 39
+      const left = 37
+      const up = 38
+      const down = 40
+      // remove pac man(pac man current position)
+      removePacMan(pacManCurrentPosition)
+      // if to check direction of key, whether the next square is a wall or edge of grid
+      if (key === right && !cells[pacManCurrentPosition + 1].classList.contains(wallClass)) {
+        //pac man current position row or column change
+        pacManCurrentPosition++
+      } else if (key === left && !cells[pacManCurrentPosition - 1].classList.contains(wallClass)) {
+        pacManCurrentPosition--
+      } else if (key === up && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
+        pacManCurrentPosition -= width
+      } else if (key === down && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
+        pacManCurrentPosition += width
+      }
+      // add pac man(pac man current position)
+      addPacMan(pacManCurrentPosition)
+      const currentCell = cells[pacManCurrentPosition]
+      // if current position has food class
+      if (currentCell.classList.contains(foodClass)) {
+        currentCell.classList.remove(foodClass)
+        score += 100
+        scoreDisplay.innerText = score
+      }
+      // if current position has ghost class
+      if (currentCell.classList.contains(ghostClass)) {
+        lives--
+        livesDisplay.innerHTML = lives
+      }
+      lives < 0 ? endGame('lose') : null
+      cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
     }
-    // add pac man(pac man current position)
-    addPacMan(pacManCurrentPosition)
-    const currentCell = cells[pacManCurrentPosition]
-    // if current position has food class
-    if (currentCell.classList.contains(foodClass)) {
-      currentCell.classList.remove(foodClass)
-      score += 100
-      scoreDisplay.innerText = score
-    }
-    // if current position has ghost class
-    if (currentCell.classList.contains(ghostClass)) {
-      lives--
-      livesDisplay.innerHTML = lives
-    }
-    lives < 0 ? endGame('lose') : null
-    cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
   }
   
-
-  //  set Interval - move ghosts()
   function moveGhosts() {
     const directionOptions = ['up', 'down', 'left', 'right']
     ghostsCurrentPositon.forEach((position, index) => {
       removeGhosts(position, index)
-      function pickDirection() {
-        let direction = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
-        //if to check if square below is wall
+      const pickDirection = (direction) => {
+        if (direction === null) {
+          const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
+          //if to check if square below is wall
+          if (option === 'right') {
+            !cells[position + 1].classList.contains(wallClass) ? ghostDirection[index] = 'right' : pickDirection(null)
+          } else if (option === 'left') {
+            !cells[position - 1].classList.contains(wallClass) ? ghostDirection[index] = 'left' : pickDirection(null)
+          } else if (option === 'up') {
+            !cells[position - width].classList.contains(wallClass) ? ghostDirection[index] = 'up' : pickDirection(null)
+          } else if (option === 'down') {
+            !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
+          }          
+        }
+        return direction
+      }
+      pickDirection(ghostDirection[index])
+      const movingGhost = (direction) => {
         if (direction === 'right') {
-          !cells[position + 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]++ : pickDirection()
-        } else if(direction === 'left') {
-          !cells[position - 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]-- : pickDirection()
-        } else if(direction === 'up') {
-          !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection()
-        } else if(direction === 'down') {
-          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection()
-        }          
+          !cells[position + 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]++ : pickDirection(null)
+        } else if (direction === 'left') {
+          !cells[position - 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]-- : pickDirection(null)
+        } else if (direction === 'up') {
+          !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection(null)
+        } else if (direction === 'down') {
+          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection(null)
+        }
         addGhost(ghostsCurrentPositon[index], index)
       }
-      pickDirection()
+      movingGhost(ghostDirection[index])
+      console.log(ghostsCurrentPositon)
     })
   //        will need default moving if neither conditions are met
   //        ghost current postion change row and column
   //      add ghost(ghost current position)
   }
- function playGame() {
-  const moveGhostInterval = setInterval(moveGhosts, 100)
- }
+  const playGame = () => {
+    for (let i = 1; i < ghostsStartingPosition.length; i++) {
+      setTimeout(() => {
+        ghostsCurrentPositon[i] = ghostsStartingPosition[0]
+        console.log('working')
+      }, 1000 * 3 )
+    }
+    const moveGhostInterval = setInterval(moveGhosts, 500)
+    playing = true
+  }
   //  end game(result)
   function endGame(result) {
     result === 'lose' ?  alert('you lose', score) : alert('you win', score)
