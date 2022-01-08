@@ -224,7 +224,7 @@ function init() {
         } else if(direction === 'up') {
           !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection()
         } else if(direction === 'down') {
-          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index]+= width : pickDirection()
+          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection()
         }          
         addGhost(ghostsCurrentPositon[index], index)
       }
@@ -235,7 +235,7 @@ function init() {
   //      add ghost(ghost current position)
   }
  function playGame() {
-  const moveGhostInterval = setInterval(moveGhosts, 1000)
+  const moveGhostInterval = setInterval(moveGhosts, 100)
  }
   //  end game(result)
   function endGame(result) {
