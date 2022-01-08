@@ -49,7 +49,7 @@ function init() {
   //  const ghosts starting positions - an array
   const ghostsStartingPosition = [157, 198, 199, 200]
   //  let pac man current position = pac man starting position
-  const pacManCurrentPosition = pacManStartingPosition
+  let pacManCurrentPosition = pacManStartingPosition
   //  let ghosts current position = ghosts starting position - an array
   
 
@@ -59,6 +59,8 @@ function init() {
 
   //  set game
   //    scoreDOM = score
+  scoreDisplay.innerText = score
+  livesDisplay.innerText = lives
   //    highscoreDOM = highscore
   //    make grid()
 
@@ -131,7 +133,10 @@ function init() {
   }
 
   //  remove pac man(position)
-  //    remove pac man class to cells[position]
+  function removePacMan(position) {
+    //remove pac man class to cells[position]
+    cells[position].classList.remove(pacManClass)
+  }
 
   //  add ghosts (position, index)
   function addGhost (position, index) {
@@ -153,23 +158,50 @@ function init() {
   //    remove ghost class to cells[position]
 
   //  move pac man(e)
-  //    const keys based on keycode to equal up down left right
-  //    remove pac man(pac man current position)
-  //     if to check direction of key, whether the next square is a wall or edge of grid
-  //       pac man current position row or column change
-  //    add pac man(pac man current position)
-  //    if current position has food class
-  //      add score
-  //      remove food class
-  //      update score DOM
-  //    if current position has ghost class
-  //      lives--
-  //      livesDOM = lives
-  //      if lives === 0 
-  //         end game(lose)
-  //    loop through cells array
-  //      if no cells contain food
-  //      end game (win)
+  function movePacMan(e) {
+    // const keys based on keycode to equal up down left right
+    const key = e.keyCode
+    const right = 39
+    const left = 37
+    const up = 38
+    const down = 40
+    // remove pac man(pac man current position)
+    removePacMan(pacManCurrentPosition)
+    // if to check direction of key, whether the next square is a wall or edge of grid
+    if (key === right && !cells[pacManCurrentPosition + 1].classList.contains(wallClass)) {
+      //pac man current position row or column change
+      pacManCurrentPosition++
+    } else if (key === left && !cells[pacManCurrentPosition - 1].classList.contains(wallClass)) {
+      pacManCurrentPosition--
+    } else if (key === up && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
+      pacManCurrentPosition -= width
+    } else if (key === down && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
+      pacManCurrentPosition += width
+    }
+    // add pac man(pac man current position)
+    addPacMan(pacManCurrentPosition)
+    const currentCell = cells[pacManCurrentPosition]
+    // if current position has food class
+    if (currentCell.classList.contains(foodClass)) {
+      // remove food class
+      currentCell.classList.remove(foodClass)
+      //add score
+      score += 100
+      scoreDisplay.innerText = score
+    }
+    // if current position has ghost class
+    if (currentCell.classList.contains(ghostClass)) {
+      //lives--
+      lives--
+      //livesDOM = lives
+      livesDisplay.innerHTML = lives
+    }
+    // if lives === 0
+    lives < 0 ? endGame('lose') : null
+    // if no cells contain food end game (win)
+    cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
+  }
+  
 
   //  set Interval - move ghosts()
   //    loop through array:
@@ -181,6 +213,13 @@ function init() {
   //    
 
   //  end game(result)
+  function endGame(result) {
+    if (result === 'lose') {
+      alert('you lose')
+    } else if (result === 'win') {
+      alert('you win')
+    }
+  }
   //    if result === 'lose'
   //      alert you lost! and score
   //    if result === 'win'
@@ -189,18 +228,20 @@ function init() {
   //    start btn.inner html = 'restart'
 
   // can have an add wall function
-  /*function saveBoard(board) {
-    for (let i = 0; i < cells.length; i++) {
-      board.push(cells[i])
-    }
-  }
-  saveBoard(board1) /*
+  // function saveBoard(board) {
+  //     for (let i = 0; i < cells.length; i++) {
+  //       board.push(cells[i])
+  //     }
+  //   }
+  //   saveBoard(board1) 
+
   // }
 
 
   //eventlisteners
   //  start button (playame)
   //  keydown (move pac man)
+  document.addEventListener('keydown', movePacMan)
 
 
   //EXTRA -----
