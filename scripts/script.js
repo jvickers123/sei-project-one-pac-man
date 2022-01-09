@@ -49,11 +49,10 @@ function init() {
   //  const ghosts starting positions - an array
   const ghostsStartingPosition = [157, 198, 199, 200]
   //  let pac man current position = pac man starting position
-  let pacManCurrentPosition = pacManStartingPosition
+  let pacManCurrentPosition
   //  let ghosts current position = ghosts starting position - an array
   let ghostsCurrentPositon = []
-  ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
-  const ghostDirection = [null]
+  const ghostDirection = []
   // set playing game to active
   let playing = false
   
@@ -64,15 +63,18 @@ function init() {
 
   //  set game
   //    scoreDOM = score
-  scoreDisplay.innerText = score
-  livesDisplay.innerText = lives
+  
   //    highscoreDOM = highscore
   //    make grid()
 
   //make grid
-  function makeGrid() {
-    // make grid based on width
-    grid.style.width = `${width * 1.25}rem`
+  function setGame() {
+    scoreDisplay.innerText = score
+    livesDisplay.innerText = lives
+    pacManCurrentPosition = pacManStartingPosition
+    ghostDirection.splice(0) //clears ghost direction
+    ghostDirection.push(null) // adds direction for first ghost
+    grid.style.width = `${width * 1.25}rem`// make grid based on width
     grid.style.height = `${height * 1.25}rem`
     grid.style.gridTemplateRows = `repeat(${height}, 1fr)`
     grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`
@@ -95,9 +97,10 @@ function init() {
     addGate(gate)
     addFood()
     ghostsStartingPosition.forEach((position, index) => addGhost(position, index))
-    //    call functions to add pac man and the ghosts 
+    ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
+    console.log()
   }
-  makeGrid()
+  setGame()
 
 
   function addWalls(position) {
@@ -212,64 +215,84 @@ function init() {
   }
   
   function moveGhosts() {
-    const directionOptions = ['up', 'down', 'left', 'right']
-    ghostsCurrentPositon.forEach((position, index) => {
-      removeGhosts(position, index)
-      const pickDirection = (direction) => {
-        if (direction === null) {
-          const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
-          //if to check if square below is wall
-          if (option === 'right') {
-            !cells[position + 1].classList.contains(wallClass) ? ghostDirection[index] = 'right' : pickDirection(null)
-          } else if (option === 'left') {
-            !cells[position - 1].classList.contains(wallClass) ? ghostDirection[index] = 'left' : pickDirection(null)
-          } else if (option === 'up') {
-            !cells[position - width].classList.contains(wallClass) ? ghostDirection[index] = 'up' : pickDirection(null)
-          } else if (option === 'down') {
-            !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
-          }          
+    if (playing === true) {
+      const directionOptions = ['up', 'down', 'left', 'right']
+      ghostsCurrentPositon.forEach((position, index) => {
+        removeGhosts(position, index)
+        const pickDirection = (direction) => {
+          if (direction === null) {
+            const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
+            //if to check if square below is wall
+            if (option === 'right') {
+              !cells[position + 1].classList.contains(wallClass) ? ghostDirection[index] = 'right' : pickDirection(null)
+            } else if (option === 'left') {
+              !cells[position - 1].classList.contains(wallClass) ? ghostDirection[index] = 'left' : pickDirection(null)
+            } else if (option === 'up') {
+              !cells[position - width].classList.contains(wallClass) ? ghostDirection[index] = 'up' : pickDirection(null)
+            } else if (option === 'down') {
+              !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
+            }          
+          }
+          return direction
         }
-        console.log(ghostsStartingPosition)
-        return direction
-      }
-      pickDirection(ghostDirection[index])
-      const movingGhost = (direction) => {
-        if (direction === 'right') {
-          !cells[position + 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]++ : pickDirection(null)
-        } else if (direction === 'left') {
-          !cells[position - 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]-- : pickDirection(null)
-        } else if (direction === 'up') {
-          !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection(null)
-        } else if (direction === 'down') {
-          !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection(null)
+        pickDirection(ghostDirection[index])
+        const movingGhost = (direction) => {
+          if (direction === 'right') {
+            !cells[position + 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]++ : pickDirection(null)
+          } else if (direction === 'left') {
+            !cells[position - 1].classList.contains(wallClass) ? ghostsCurrentPositon[index]-- : pickDirection(null)
+          } else if (direction === 'up') {
+            !cells[position - width].classList.contains(wallClass) ? ghostsCurrentPositon[index] -= width : pickDirection(null)
+          } else if (direction === 'down') {
+            !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection(null)
+          }
+          addGhost(ghostsCurrentPositon[index], index)
         }
-        addGhost(ghostsCurrentPositon[index], index)
-      }
-      movingGhost(ghostDirection[index])
-    })
+        movingGhost(ghostDirection[index])
+      })
+      console.log('running')
+    }
   //        will need default moving if neither conditions are met
   //        ghost current postion change row and column
   //      add ghost(ghost current position)
   }
-  const playGame = () => {
-    for (let i = 1; i < ghostsStartingPosition.length; i++) {// loop through ghosts and release every 7 seconds
-      setTimeout(() => {
+
+  let moveGhostInterval //give interval global scope so can be stopped after end game
+
+  function playGame(starting) {
+    playing = true
+    moveGhostInterval = setInterval(moveGhosts, 500)
+    for (let i = 1; i < ghostsStartingPosition.length; i++) {
+      // loop through ghosts and release every 7 seconds
+      const releaseGhosts = setTimeout(() => {
         removeGhosts(ghostsCurrentPositon[i], i)
         ghostsCurrentPositon[i] = ghostsStartingPosition[0] // start wherever first ghost started
         addGhost(ghostsCurrentPositon[i], i)
         ghostDirection.push(null)
+        console.log('timeouthappening', i, ghostsCurrentPositon[i])
       }, 1000 * 7 * i )
+      console.log('for loop running')
     }
-    const moveGhostInterval = setInterval(moveGhosts, 500)
-    playing = true
+    console.log('playGame running again')
   }
+    
+  
   //  end game(result)
   function endGame(result) {
+    clearInterval(moveGhostInterval)
+    clearTimeout(releaseGhosts)
     result === 'lose' ?  alert('you lose', score) : alert('you win', score)
     startBtn.innerText = 'restart'
-    pacManCurrentPosition = pacManStartingPosition
-    makeGrid()
+    removePacMan(pacManCurrentPosition)
+    ghostsCurrentPositon.forEach((position, index) => removeGhosts(position, index))
+    ghostsCurrentPositon = []
+    lives = 3
+    score = 0
+    playing = false
+    setGame()
+    
   }
+
   //    if result === 'lose'
   //      alert you lost! and score
   //    if result === 'win'
