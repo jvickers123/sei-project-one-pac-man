@@ -41,7 +41,7 @@ function init() {
   //save board arrays
   // const board1 = []
   //character movement variables
-  const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 434, 435, 436, 437, 438, 439]
+  const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 434, 435, 436, 437, 438, 439]
   const gate = 178
  
   //  const pac man starting position
@@ -51,8 +51,9 @@ function init() {
   //  let pac man current position = pac man starting position
   let pacManCurrentPosition = pacManStartingPosition
   //  let ghosts current position = ghosts starting position - an array
-  let ghostsCurrentPositon = ghostsStartingPosition
-  const ghostDirection = [null, null, null, null]
+  let ghostsCurrentPositon = []
+  ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
+  const ghostDirection = [null]
   // set playing game to active
   let playing = false
   
@@ -228,6 +229,7 @@ function init() {
             !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
           }          
         }
+        console.log(ghostsStartingPosition)
         return direction
       }
       pickDirection(ghostDirection[index])
@@ -244,18 +246,19 @@ function init() {
         addGhost(ghostsCurrentPositon[index], index)
       }
       movingGhost(ghostDirection[index])
-      console.log(ghostsCurrentPositon)
     })
   //        will need default moving if neither conditions are met
   //        ghost current postion change row and column
   //      add ghost(ghost current position)
   }
   const playGame = () => {
-    for (let i = 1; i < ghostsStartingPosition.length; i++) {
+    for (let i = 1; i < ghostsStartingPosition.length; i++) {// loop through ghosts and release every 7 seconds
       setTimeout(() => {
-        ghostsCurrentPositon[i] = ghostsStartingPosition[0]
-        console.log('working')
-      }, 1000 * 3 )
+        removeGhosts(ghostsCurrentPositon[i], i)
+        ghostsCurrentPositon[i] = ghostsStartingPosition[0] // start wherever first ghost started
+        addGhost(ghostsCurrentPositon[i], i)
+        ghostDirection.push(null)
+      }, 1000 * 7 * i )
     }
     const moveGhostInterval = setInterval(moveGhosts, 500)
     playing = true
