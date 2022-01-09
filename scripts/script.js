@@ -261,22 +261,20 @@ function init() {
   let releaseGhostsTimer
 
   function releaseGhosts() {
-    console.log(typeof this, parseFloat(this))
+    // console.log(typeof this, parseFloat(this))
     const index = parseInt(this)
-    if (index) {
-      console.log('working')
-      removeGhosts(ghostsCurrentPositon[index], index)
-      ghostsCurrentPositon[index] = ghostsStartingPosition[0] // start wherever first ghost started
-      addGhost(ghostsCurrentPositon[index], index)
-      ghostDirection.push(null)
-      console.log('timeouthappening', index)
-    }
+    console.log('working')
+    removeGhosts(ghostsCurrentPositon[index], index)
+    ghostsCurrentPositon[index] = ghostsStartingPosition[0] // start wherever first ghost started
+    addGhost(ghostsCurrentPositon[index], index)
+    ghostDirection.push(null)
+    console.log('timeouthappening', index)
   }
 
   function playGame(starting) {
     playing = true
     moveGhostInterval = setInterval(moveGhosts, 500)
-    ghostsCurrentPositon.forEach((position, index) => setInterval(releaseGhosts(position, index)))
+    // ghostsCurrentPositon.forEach((position, index) => setInterval(releaseGhosts(position, index)))
     for (let i = 1; i < ghostsStartingPosition.length; i++) {
       // loop through ghosts and release every 7 seconds
       releaseGhostsTimer = setTimeout(releaseGhosts.bind(i), 1000 * 7 * i)
