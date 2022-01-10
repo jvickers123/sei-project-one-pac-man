@@ -83,7 +83,7 @@ function init() {
       colour = 'orange'
     }
     cells[position].classList.add(ghostClass, colour)
-    frightened ? cells[position].classList.add(frightenedClass) : null
+    !!frightened ? cells[position].classList.add(frightenedClass) : null
   }
 
   const removeGhosts = (position, index) => {
@@ -105,6 +105,8 @@ function init() {
 
   const frightenedGhosts = () => {
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
+    const removeFrightenedClass = () => ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
+    const endFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 15)
   }
 
   const setGame = () => {
@@ -159,10 +161,11 @@ function init() {
   const ghostPacCollision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
+        score += 250
         const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
         removeGhosts(parseInt(cell.id), index)
         ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
-        addGhost(ghostsCurrentPositon[index], index, true) 
+        addGhost(ghostsCurrentPositon[index], index, true)
       } else {
         lives--
         livesDisplay.innerHTML = lives
@@ -227,6 +230,8 @@ function init() {
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
     ghostsCurrentPositon.forEach((position, index) => {
+      let frightened 
+      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
       removeGhosts(position, index) //: removeGhosts(position)
       const pickDirection = (direction) => {
         if (direction === null) {
@@ -257,8 +262,6 @@ function init() {
         }
       }
       movingGhost(ghostDirection[index])
-      let frightened 
-      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
       frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
       ghostPacCollision(cells[position], pacManClass, frightened)
     })
@@ -271,9 +274,11 @@ function init() {
   const releaseGhosts = () => {
     if (releaseGhostCount < ghostsStartingPosition.length) {// if count is lower than no. ghosts
       const index = releaseGhostCount
+      let frightened
+      cells[ghostsCurrentPositon[index]].classList.contains(frightenedClass) ? frightened = true : frightened = false
       removeGhosts(ghostsCurrentPositon[index], index)
       ghostsCurrentPositon[index] = ghostsStartingPosition[0] // start wherever first ghost started
-      addGhost(ghostsCurrentPositon[index], index)
+      addGhost(ghostsCurrentPositon[index], index, frightened)
       ghostDirection.push(null)
       releaseGhostCount++
     } else {
