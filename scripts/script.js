@@ -86,24 +86,21 @@ function init() {
     frightened ? cells[position].classList.add(frightenedClass) : null
   }
 
-  const removeGhosts = (position, index, frightened) => {
+  const removeGhosts = (position, index) => {
+    // frightened ? console.log('removeghosts arguments, ', position, index, cells[position].classList) : null
     let colour
-    if (typeof index === 'number') {
-      if (index % 4 === 0) {
-        colour = 'red'
-      } else if (index % 4 === 1) {
-        colour = 'cyan' 
-      } else if (index % 4 === 2) {
-        colour = 'pink'
-      } else if (index % 4 === 3) {
-        colour = 'orange'
-      }
-    } else {
-      colour = index
+    if (index % 4 === 0) {
+      colour = 'red'
+    } else if (index % 4 === 1) {
+      colour = 'cyan' 
+    } else if (index % 4 === 2) {
+      colour = 'pink'
+    } else if (index % 4 === 3) {
+      colour = 'orange'
     }
-    
-    cells[position].classList.remove(ghostClass, colour)
-    frightened ? cells[position].classList.remove(frightenedClass) : null
+    cells[position].classList.remove(ghostClass, colour, frightenedClass)
+    // frightened ? cells[position].classList.remove(frightenedClass) : null
+    // frightened ? console.log(cells[position].classList) : null
   }
 
   const frightenedGhosts = () => {
@@ -153,25 +150,26 @@ function init() {
   }
   setGame()
 
-  const eatGhost = (cell, index) => {
-    removeGhosts(cell.id, index, true)
-    ghostsCurrentPositon[index] = ghostsStartingPosition[0] // sends ghost to start
-    console.log(index)
-  }
+  // const eatGhost = (cell, index) => {
+  //   removeGhosts(cell.id, index, true)
+  //   ghostsCurrentPositon[index] = ghostsStartingPosition[0] // sends ghost to start
+  //   addGhost(cell.id, index, true)
+  // }
 
-  const checkLives = (cell, checkClass, frightened) => {
+  const ghostPacCollision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
         const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
-        removeGhosts(parseInt(cell.id), index, true)
+        removeGhosts(parseInt(cell.id), index)
         ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
+        addGhost(ghostsCurrentPositon[index], index, true) 
       } else {
         lives--
         livesDisplay.innerHTML = lives
       }
       lives < 0 ? endGame('lose') : null
     }
-}
+  }
 
   
 
@@ -220,7 +218,7 @@ function init() {
       // if current position has ghost class
       let frightened
       currentCell.classList.contains(frightenedClass) ? frightened = true : frightened = false 
-      checkLives(currentCell, ghostClass, frightened)
+      ghostPacCollision(currentCell, ghostClass, frightened)
       
       cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
     }
@@ -229,9 +227,7 @@ function init() {
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
     ghostsCurrentPositon.forEach((position, index) => {
-      let frightened 
-      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
-      frightened ? removeGhosts(position, index, true) : removeGhosts(position, index, false) // check whether to pass frightened = true to add and remove ghost
+      removeGhosts(position, index) //: removeGhosts(position)
       const pickDirection = (direction) => {
         if (direction === null) {
           const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
@@ -259,11 +255,12 @@ function init() {
         } else if (direction === 'down') {
           !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection(null)
         }
-        frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
       }
       movingGhost(ghostDirection[index])
-      checkLives(cells[ghostsCurrentPositon[index]], pacManClass, frightened)
-      
+      let frightened 
+      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
+      frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
+      ghostPacCollision(cells[position], pacManClass, frightened)
     })
   }
 
