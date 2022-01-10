@@ -27,7 +27,7 @@ function init() {
   //save board arrays
   // const board1 = []
   //character movement variables
-  const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 434, 435, 436, 437, 438, 439]
+  const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439]
   const gate = 178
  
   const pacManStartingPosition = 325
@@ -161,10 +161,19 @@ function init() {
         pacManCurrentPosition++
       } else if (key === left && !cells[pacManCurrentPosition - 1].classList.contains(wallClass)) {
         pacManCurrentPosition--
-      } else if (key === up && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
+      } else if (key === up && !!cells[pacManCurrentPosition - width] && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
         pacManCurrentPosition -= width
-      } else if (key === down && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
+      } else if (key === down && !!cells[pacManCurrentPosition + width] && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
         pacManCurrentPosition += width
+      //check to see if next square is off grid
+      } else if (key === right && cells[pacManCurrentPosition + 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
+        pacManCurrentPosition -= width - 1
+      } else if (key === left && cells[pacManCurrentPosition - 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
+        pacManCurrentPosition += width - 1
+      } else if (key === up && !cells[pacManCurrentPosition - width]) { 
+        pacManCurrentPosition = cellCount - (width - pacManCurrentPosition)
+      } else if (key === down && !cells[pacManCurrentPosition + width]) { 
+        pacManCurrentPosition = width - (cellCount - pacManCurrentPosition)
       }
       addPacMan(pacManCurrentPosition)
       const currentCell = cells[pacManCurrentPosition]
@@ -259,13 +268,6 @@ function init() {
     setGame()
     
   }
-
-  //    if result === 'lose'
-  //      alert you lost! and score
-  //    if result === 'win'
-  //      alert = you win and score
-  //    update local storage if score higher than highscore
-  //    start btn.inner html = 'restart'
 
   // can have an add wall function
   // function saveBoard(board) {
