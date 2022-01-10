@@ -257,36 +257,35 @@ function init() {
   //      add ghost(ghost current position)
   }
 
-  let moveGhostInterval //give interval global scope so can be stopped after end game
-  let releaseGhostsTimer
+  let moveGhostInterval //give intervals global scope so can be stopped after end game
+  let releaseGhostsInterval
+  let releaseGhostCount = 1 //give global scope so it can be reset in endgame
 
   function releaseGhosts() {
-    // console.log(typeof this, parseFloat(this))
-    const index = parseInt(this)
-    console.log('working')
-    removeGhosts(ghostsCurrentPositon[index], index)
-    ghostsCurrentPositon[index] = ghostsStartingPosition[0] // start wherever first ghost started
-    addGhost(ghostsCurrentPositon[index], index)
-    ghostDirection.push(null)
-    console.log('timeouthappening', index)
+    if (releaseGhostCount < ghostsStartingPosition.length) {// if count is lower than no. ghosts
+      const index = releaseGhostCount
+      removeGhosts(ghostsCurrentPositon[index], index)
+      ghostsCurrentPositon[index] = ghostsStartingPosition[0] // start wherever first ghost started
+      addGhost(ghostsCurrentPositon[index], index)
+      ghostDirection.push(null)
+      releaseGhostCount++
+    } else {
+      clearInterval(releaseGhostsInterval) // stop function when all ghosts have been released
+    }
+    
   }
 
-  function playGame(starting) {
+  function playGame() {
     playing = true
-    moveGhostInterval = setInterval(moveGhosts, 500)
-    // ghostsCurrentPositon.forEach((position, index) => setInterval(releaseGhosts(position, index)))
-    for (let i = 1; i < ghostsStartingPosition.length; i++) {
-      // loop through ghosts and release every 7 seconds
-      releaseGhostsTimer = setTimeout(releaseGhosts.bind(i), 1000 * 7 * i)
-    }
-    console.log('playGame running again')
+    moveGhostInterval = setInterval(moveGhosts, 500) // start moving ghosts
+    releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
   }
     
   
   //  end game(result)
   function endGame(result) {
     clearInterval(moveGhostInterval)
-    clearTimeout(releaseGhostsTimer)
+    clearInterval(releaseGhostsInterval)
     result === 'lose' ?  alert('you lose', score) : alert('you win', score)
     startBtn.innerText = 'restart'
     removePacMan(pacManCurrentPosition)
@@ -295,6 +294,7 @@ function init() {
     lives = 3
     score = 0
     playing = false
+    releaseGhostCount = 1
     setGame()
     
   }
