@@ -42,6 +42,10 @@ button {
   background-position: center;
 }
 
+.big-food {
+  background-size: 60%;
+}
+
 .pac-man, .ghost {
   background-size: cover;
 }
@@ -63,6 +67,10 @@ button {
 
 .pink{
   background-image: url("../images/pink.gif");
+}
+
+.frightened {
+  background-image: url("../images/frightened.gif");
 }
 
 button {

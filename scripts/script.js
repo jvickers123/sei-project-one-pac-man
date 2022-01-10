@@ -21,15 +21,17 @@ function init() {
   const wallClass = 'wall'
   const gateClass = 'gate'
   const foodClass = 'food'
+  const bigFoodClass = 'big-food'
   const ghostClass = 'ghost'
   const pacManClass = 'pac-man'
+  const frightenedClass = 'frightened'
 
   //save board arrays
   // const board1 = []
   //character movement variables
   const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439]
   const gate = 178
- 
+  const bigFoodStartingPosition = [44, 60, 317, 333]
   const pacManStartingPosition = 325
   const ghostsStartingPosition = [157, 198, 199, 200]
   let pacManCurrentPosition
@@ -52,6 +54,7 @@ function init() {
   const addGate = (position) => cells[position].classList.add(gateClass)
   const addWalls = (position) => cells[position].classList.add(wallClass)
   const removePacMan = (position) => cells[position].classList.remove(pacManClass) //  remove pac man class from current position
+  const addBigFood = (position) => cells[position].classList.add(bigFoodClass)
 
   const addFood = () => {
     const foodArray = cells.filter(cell => { //filter cells array by if they do not contain wall class and they are not on the edge or in middle
@@ -68,7 +71,7 @@ function init() {
     foodArray.forEach(cell => cell.classList.add(foodClass))
   }
 
-  const addGhost = (position, index) => {
+  const addGhost = (position, index, frightened) => {
     let colour
     if (index % 4 === 0) {
       colour = 'red'
@@ -80,20 +83,31 @@ function init() {
       colour = 'orange'
     }
     cells[position].classList.add(ghostClass, colour)
+    frightened ? cells[position].classList.add(frightenedClass) : null
   }
 
-  const removeGhosts = (position, index) => {
+  const removeGhosts = (position, index, frightened) => {
     let colour
-    if (index % 4 === 0) {
-      colour = 'red'
-    } else if (index % 4 === 1) {
-      colour = 'cyan' 
-    } else if (index % 4 === 2) {
-      colour = 'pink'
-    } else if (index % 4 === 3) {
-      colour = 'orange'
+    if (typeof index === 'number') {
+      if (index % 4 === 0) {
+        colour = 'red'
+      } else if (index % 4 === 1) {
+        colour = 'cyan' 
+      } else if (index % 4 === 2) {
+        colour = 'pink'
+      } else if (index % 4 === 3) {
+        colour = 'orange'
+      }
+    } else {
+      colour = index
     }
+    
     cells[position].classList.remove(ghostClass, colour)
+    frightened ? cells[position].classList.remove(frightenedClass) : null
+  }
+
+  const frightenedGhosts = () => {
+    ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
   }
 
   const setGame = () => {
@@ -132,19 +146,34 @@ function init() {
     addPacMan(pacManCurrentPosition)
     wallsStartingPosition.forEach(position => addWalls(position))
     addGate(gate)
+    bigFoodStartingPosition.forEach(position => addBigFood(position))
     addFood()
     ghostsStartingPosition.forEach((position, index) => addGhost(position, index))
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
   setGame()
-  
-  const checkLives = (cell, checkClass) => {
-    if (cell.classList.contains(checkClass)) {
-      lives--
-      livesDisplay.innerHTML = lives
-    }
-    lives < 0 ? endGame('lose') : null
+
+  const eatGhost = (cell, index) => {
+    removeGhosts(cell.id, index, true)
+    ghostsCurrentPositon[index] = ghostsStartingPosition[0] // sends ghost to start
+    console.log(index)
   }
+
+  const checkLives = (cell, checkClass, frightened) => {
+    if (cell.classList.contains(checkClass)) {
+      if (frightened) {
+        const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
+        removeGhosts(parseInt(cell.id), index, true)
+        ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
+      } else {
+        lives--
+        livesDisplay.innerHTML = lives
+      }
+      lives < 0 ? endGame('lose') : null
+    }
+}
+
+  
 
   //  move pac man(e)
   function movePacMan(e) {
@@ -165,7 +194,7 @@ function init() {
         pacManCurrentPosition -= width
       } else if (key === down && !!cells[pacManCurrentPosition + width] && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
         pacManCurrentPosition += width
-      //check to see if next square is off grid
+      //check to see if next square is off grid and then move to other side of screen
       } else if (key === right && cells[pacManCurrentPosition + 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
         pacManCurrentPosition -= width - 1
       } else if (key === left && cells[pacManCurrentPosition - 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
@@ -183,8 +212,16 @@ function init() {
         score += 100
         scoreDisplay.innerText = score
       }
+      // bigFood chek
+      if (currentCell.classList.contains(bigFoodClass)) {
+        frightenedGhosts()
+        currentCell.classList.remove(bigFoodClass)
+      }
       // if current position has ghost class
-      checkLives(currentCell, ghostClass)
+      let frightened
+      currentCell.classList.contains(frightenedClass) ? frightened = true : frightened = false 
+      checkLives(currentCell, ghostClass, frightened)
+      
       cells.some(cell => cell.classList.contains(foodClass)) ? null : endGame('win')
     }
   }
@@ -192,7 +229,9 @@ function init() {
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
     ghostsCurrentPositon.forEach((position, index) => {
-      removeGhosts(position, index)
+      let frightened 
+      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
+      frightened ? removeGhosts(position, index, true) : removeGhosts(position, index, false) // check whether to pass frightened = true to add and remove ghost
       const pickDirection = (direction) => {
         if (direction === null) {
           const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
@@ -220,10 +259,11 @@ function init() {
         } else if (direction === 'down') {
           !cells[position + width].classList.contains(wallClass) ? ghostsCurrentPositon[index] += width : pickDirection(null)
         }
-        addGhost(ghostsCurrentPositon[index], index)
+        frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
       }
       movingGhost(ghostDirection[index])
-      checkLives(cells[ghostsCurrentPositon[index]], pacManClass)
+      checkLives(cells[ghostsCurrentPositon[index]], pacManClass, frightened)
+      
     })
   }
 
@@ -288,10 +328,6 @@ function init() {
 
 
   //EXTRA -----
-
-  // move to other side if gap in the middle
-  //   check to see in all movement if next cell is outside grid
-  //      current position is + width or - width
 
   //flashy food function
   //    triggered with extra check in pac man move if same square as flashy food
