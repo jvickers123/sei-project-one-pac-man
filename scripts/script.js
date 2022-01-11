@@ -6,15 +6,25 @@ function init() {
   const livesDisplay = document.querySelector('#lives')
   const startBtn = document.querySelector('#start-game')
 
-  //variables
-  const width = 21
-  const height = 21
-  const cellCount = width * height
-  const cells = []
 
+
+  //boards
+
+
+ 
+  //variables
+  let width
+  let height
+  let cellCount
+  const cells = []
   let score = 0
   let highScore = localStorage.getItem('highScore')
   let lives = 3
+  startBtn.innerHTML = 'Start Game!'
+  const boards = [] //array of different boards
+  let level = 0
+
+
   
 
   //classes
@@ -29,26 +39,39 @@ function init() {
   //save board arrays
   // const board1 = []
   //character movement variables
-  const wallsStartingPosition = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439]
-  const gate = 178
-  const bigFoodStartingPosition = [44, 60, 317, 333]
-  const pacManStartingPosition = 325
-  const ghostsStartingPosition = [157, 198, 199, 200]
+  let wallsStartingPosition//[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439]
+  let gate // 178
+  let bigFoodStartingPosition //[44, 60, 317, 333]
+  let pacManStartingPosition  //325
+  let ghostsStartingPosition //[157, 198, 199, 200]
   let pacManCurrentPosition
   const ghostsCurrentPositon = []
   const ghostDirection = []
   let playing = false
+
+  // new Board Class
+  class Board {
+    constructor(width, height, walls, gate, bigFood, pacMan, ghosts) {
+      this.width = width
+      this.height = height
+      this.walls = walls
+      this.gate = gate
+      this.bigFood = bigFood
+      this.pacMan = pacMan
+      this.ghosts = ghosts
+    }
+    pushBoard() {
+      boards.push(this)
+    }
+  }
+
+  //boards
+  const board1 = new Board(21, 21,[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439], 178, [44, 60, 317, 333], 325, [157, 198, 199, 200]  )
+  board1.pushBoard()
+  console.log(boards)
+  
   
 
-  //functions
-  //  start btn html = start
-  startBtn.innerHTML = 'Start Game!'
-
-  //  set game
-  //    scoreDOM = score
-  
-  //    highscoreDOM = highscore
-  //    make grid()
 
   const addPacMan = (position) => cells[position].classList.add(pacManClass) //  add pac man class to current position
   const addGate = (position) => cells[position].classList.add(gateClass)
@@ -108,6 +131,15 @@ function init() {
   }
 
   const setGame = () => {
+    //set variables
+    width = boards[level].width
+    height = boards[level].height
+    cellCount = width * height
+    wallsStartingPosition = boards[level].walls
+    gate = boards[level].gate
+    bigFoodStartingPosition = boards[level].bigFood
+    pacManStartingPosition = boards[level].pacMan
+    ghostsStartingPosition = boards[level].ghosts
     //reset game
     scoreDisplay.innerText = score
     livesDisplay.innerText = lives
@@ -152,11 +184,7 @@ function init() {
   }
   setGame()
 
-  // const eatGhost = (cell, index) => {
-  //   removeGhosts(cell.id, index, true)
-  //   ghostsCurrentPositon[index] = ghostsStartingPosition[0] // sends ghost to start
-  //   addGhost(cell.id, index, true)
-  // }
+ 
 
   const ghostPacCollision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
@@ -308,6 +336,7 @@ function init() {
     score = 0
     playing = false
     releaseGhostCount = 1
+    level++ //bring up new board
     setGame()
     
   }
