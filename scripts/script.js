@@ -68,9 +68,9 @@ function init() {
   //boards
   const board1 = new Board(21, 21,[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439], 178, [44, 60, 317, 333], 325, [157, 198, 199, 200]  )
   board1.pushBoard()
-  const board2 = new Board(31, 21, [4, 5, 6, 7, 8, 9, 10, 11, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26, 32, 33, 34, 35, 42, 43, 44, 45, 47, 48, 49, 50, 57, 58, 59, 60, 63, 68, 69, 71, 83, 85, 86, 91, 94, 96, 97, 102, 104, 105, 106, 107, 108, 109, 110, 111, 112, 114, 119, 120, 122, 125, 127, 128, 131, 132, 133, 139, 145, 146, 147, 150, 151, 153, 156, 164, 166, 168, 170, 172, 174, 176, 184, 187, 188, 189, 190, 192, 193, 197, 199, 201, 203, 205, 209, 210, 212, 213, 214, 215, 221, 230, 234, 243, 248, 249, 250, 251, 252, 254, 255, 257, 258, 260, 261, 262, 263, 264, 265, 266, 268, 269, 271, 272, 274, 275, 276, 277, 278, 285, 289, 291, 297, 299, 303, 310, 311, 312, 313, 314, 316, 317, 319, 320, 322, 323, 324, 325, 326, 327, 328, 330, 331, 333, 334, 336, 337, 338, 339, 340, 345, 348, 350, 362, 364, 367, 373, 374, 375, 376, 383, 384, 385, 386, 387, 388, 389, 390, 391, 398, 399, 400, 401, 404, 406, 409, 410, 411, 412, 422, 424, 425, 426, 427, 430, 432, 435, 437, 439, 440, 441, 445, 447, 448, 449, 451, 458, 459, 461, 463, 466, 474, 476, 478, 480, 482, 483, 485, 486, 494, 497, 498, 499, 500, 502, 503, 505, 507, 509, 514, 516, 519, 520, 522, 524, 525, 528, 530, 531, 533, 534, 536, 537, 538, 540, 541, 542, 543, 544, 545, 547, 548, 550, 551, 553, 554, 556, 559, 579, 587, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 605, 606, 607, 608, 612, 613, 614, 615, 616, 617, 618, 634, 636, 639, 640, 641, 642, 643], 263, [429, 407, 115, 99], 232, [356, 292, 293, 294, 295, 296 ]  )
+  const board2 = new Board(31, 21, [4, 5, 6, 7, 8, 9, 10, 11, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26, 32, 33, 34, 35, 42, 43, 44, 45, 47, 48, 49, 50, 57, 58, 59, 60, 63, 68, 69, 71, 83, 85, 86, 91, 94, 96, 97, 102, 104, 105, 106, 107, 108, 109, 110, 111, 112, 114, 119, 120, 122, 125, 127, 128, 131, 132, 133, 139, 145, 146, 147, 150, 151, 153, 156, 164, 166, 168, 170, 172, 174, 176, 184, 187, 188, 189, 190, 192, 193, 197, 199, 201, 203, 205, 209, 210, 212, 213, 214, 215, 221, 230, 234, 243, 248, 249, 250, 251, 252, 254, 255, 257, 258, 260, 261, 262, 263, 264, 265, 266, 268, 269, 271, 272, 274, 275, 276, 277, 278, 285, 289, 291, 297, 299, 303, 310, 311, 312, 313, 314, 316, 317, 319, 320, 322, 323, 324, 325, 326, 327, 328, 330, 331, 333, 334, 336, 337, 338, 339, 340, 345, 348, 350, 362, 364, 367, 373, 374, 375, 376, 383, 384, 385, 386, 387, 388, 389, 390, 391, 398, 399, 400, 401, 404, 406, 409, 410, 411, 412, 422, 424, 425, 426, 427, 430, 432, 435, 437, 439, 440, 441, 445, 447, 448, 449, 451, 458, 459, 461, 463, 466, 474, 476, 478, 480, 482, 483, 485, 486, 494, 497, 498, 499, 500, 502, 503, 505, 507, 509, 514, 516, 519, 520, 522, 524, 525, 528, 530, 531, 533, 534, 536, 537, 538, 540, 541, 542, 543, 544, 545, 547, 548, 550, 551, 553, 554, 556, 559, 579, 587, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 605, 606, 607, 608, 612, 613, 614, 615, 616, 617, 618, 634, 636, 639, 640, 641, 642, 643], 263, [429, 407, 115, 101], 232, [356, 292, 293, 294, 295, 296 ]  )
   board2.pushBoard()
-  const blankBoard = new Board(31, 21, [], null, [], null, [])
+  const blankBoard = new Board(35, 13, [], 192, [88, 110, 355, 379], 367, [])
   blankBoard.pushBoard()
   console.log(boards)
   
@@ -88,9 +88,9 @@ function init() {
       const cellX = parseInt(cell.getAttribute('x'))
       const cellY = parseInt(cell.getAttribute('y'))
       const containsWall = cell.classList.contains('wall')
-      const outside = (cellX === 0) || (cellX === width - 1)
-      const middle = cellX >= (width / 7 * 2) && cellX <= (width / 3 * 2) && cellY >= (width / 3) && (cellY <= (width / 7 * 4))
-      const extraSideSection = ( cellX <= 4 || cellX >= (width - 5) ) && ( cellY >= 6 && cellY <= 12 )
+      const outside = (cellX === 0) || (cellX === width - 1) || (cellY === 0) || (cellY === height - 1)
+      const middle = cellX >= ((width / 2) - 5) && cellX <= ((width / 2) + 4) && cellY >= ((height / 2) - 4) && (cellY <= ((height / 2) + 2))
+      const extraSideSection = ( cellX <= 4 || cellX >= (width - 5) ) && ( cellY >= (height / 2) - 4) && (cellY <= (height / 2) + 2)
       if (!containsWall && !outside && !middle && !extraSideSection) {
         return true
       }
@@ -186,6 +186,7 @@ function init() {
     ghostsStartingPosition.forEach((position, index) => addGhost(position, index))
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
+  level = 2
   setGame()
 
  
@@ -331,7 +332,7 @@ function init() {
     clearInterval(moveGhostInterval)
     clearInterval(releaseGhostsInterval)
     result === 'lose' ?  alert('you lose', score) : alert('you win', score)
-    startBtn.innerText = 'restart'
+    startBtn.innerText = 'Start Next Level'
     removePacMan(pacManCurrentPosition)
     ghostsCurrentPositon.forEach((position, index) => removeGhosts(position, index))
     // ghostsCurrentPositon
@@ -356,15 +357,39 @@ function init() {
   // }
 
   const saveBoard = () => {
-    // const cells = document.querySelectorAll('.cell')
+    // function to toggle wall class on cell that is clicked
     function addWalls(e) {
       const cellClasses = e.target.classList
       cellClasses.contains(wallClass) ? cellClasses.remove(wallClass) : cellClasses.add(wallClass)
       boards[level].walls.push(parseInt(e.target.id))
       console.log(e.target)
     }
+    //create button to skip level when editing
+    //create button to print all the wall cells so that I can copy to the new board
+    const body = document.querySelector('body')
+    const printWallsBtn = document.createElement('BUTTON')
+    printWallsBtn.innerText = 'print walls'
+    const nextLevelbtn = document.createElement('BUTTON')
+    nextLevelbtn.innerText = 'next level'
+    body.appendChild(printWallsBtn)
+    body.appendChild(nextLevelbtn)
 
+    //function to print walls to console.log
+    const printWalls = () => {
+      console.log(boards[level].walls)
+    }
+
+    //function to skip level
+    const skipLevel = () => {
+      endGame()
+      console.log(boards[level].walls)
+    }
+    //event listeners
     grid.addEventListener('click', addWalls)
+    printWallsBtn.addEventListener('click', printWalls)
+    nextLevelbtn.addEventListener('click', skipLevel)
+
+
   }
 
 saveBoard()
