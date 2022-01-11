@@ -5,6 +5,7 @@ function init() {
   const highScoreDisplay = document.querySelector('#high-score')
   const livesDisplay = document.querySelector('#lives-container')
   const startBtn = document.querySelector('#start-game')
+  const btncontainer = document.querySelector('#buttons-container')
 
   //variables
   let width
@@ -15,9 +16,12 @@ function init() {
   let highScore = localStorage.getItem('highScore')
   let lives
   // const life = document.createElement('div')
-  startBtn.innerHTML = 'Start Game!'
+  startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
   let level = 0
+  let moveGhostInterval //give intervals global scope so can be stopped after end game
+  let releaseGhostsInterval
+  let releaseGhostCount//give global scope so it can be reset in endgame
   
   //classes
   const wallClass = 'wall'
@@ -130,8 +134,10 @@ function init() {
     const endFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
 
-  const setGame = () => {
+  const resetGame = () => {
     //reset game
+    clearInterval(moveGhostInterval)
+    clearInterval(releaseGhostsInterval)
     for (let i = 0; i < lives; i++) { //reset life display
       const life = document.querySelector('.lives')
       livesDisplay.removeChild(life)
@@ -144,7 +150,10 @@ function init() {
       cell ? grid.removeChild(cell) : null
     }
     cells.splice(0) // empty cells array
-    
+      
+  }
+  const loadLevel = () => {
+    resetGame()
     //set variables
     width = boards[level].width
     height = boards[level].height
@@ -154,18 +163,19 @@ function init() {
     bigFoodStartingPosition = boards[level].bigFood
     pacManStartingPosition = boards[level].pacMan
     ghostsStartingPosition = boards[level].ghosts
-
-    //set game
-    pacManCurrentPosition = pacManStartingPosition
-    scoreDisplay.innerText = score
+    releaseGhostCount = 1
     lives = 5
+    highScore = localStorage.getItem('highScore')
+    pacManCurrentPosition = pacManStartingPosition
+
+    //set display
+    scoreDisplay.innerText = score
+    highScoreDisplay.innerText = highScore
     for (let i = 1; i <= lives; i++) { //create lives display
       const life = document.createElement('div')
       life.classList.add(livesClass)
       livesDisplay.appendChild(life)
     }
-    highScore = localStorage.getItem('highScore')
-    highScoreDisplay.innerText = highScore
 
     //create grid
     grid.style.width = `${width * 1.25}rem`// make grid based on width
@@ -196,10 +206,10 @@ function init() {
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
   // level = 3
-  setGame()
+  loadLevel()
 
  
-  const ghostPacCollision = (cell, checkClass, frightened) => {
+  const collision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
         score += 250
@@ -270,7 +280,7 @@ function init() {
       // if current position has ghost class
       let frightened
       currentCell.classList.contains(frightenedClass) ? frightened = true : frightened = false 
-      ghostPacCollision(currentCell, ghostClass, frightened)
+      collision(currentCell, ghostClass, frightened)
       
       cells.some(cell => cell.classList.contains(foodClass)) ? null : endLevel('win')
     }
@@ -313,13 +323,11 @@ function init() {
       movingGhost(ghostDirection[index])
       // cells[position].style.transform = 'rotate(0)'
       frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
-      ghostPacCollision(cells[position], pacManClass, frightened)
+      collision(cells[position], pacManClass, frightened)
     })
   }
 
-  let moveGhostInterval //give intervals global scope so can be stopped after end game
-  let releaseGhostsInterval
-  let releaseGhostCount = 1 //give global scope so it can be reset in endgame
+  
 
   const releaseGhosts = () => {
     if (releaseGhostCount < ghostsStartingPosition.length) {// if count is lower than no. ghosts
@@ -341,41 +349,30 @@ function init() {
     playing = true
     moveGhostInterval = setInterval(moveGhosts, 500) // start moving ghosts
     releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
+    btncontainer.removeChild(startBtn)// remove start button
   }
   
-  const endGame = () => {
-    window.alert(`you win. Your Score is ${score}`)
+  const endGame = (result) => {
+    result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
+    score > highScore ? localStorage.setItem('highScore', score) : null
     level = 0
     endLevel()
   }
   
-  //  end game(result)
+  //  end levelresult)
   const endLevel = (result) => {
-    clearInterval(moveGhostInterval)
-    clearInterval(releaseGhostsInterval)
-    result === 'lose' ?  window.alert(`you lose. Your Score is ${score}`) : null
-    startBtn.innerText = 'Start Next Level'
     removePacMan(pacManCurrentPosition)
     ghostsCurrentPositon.forEach((position, index) => removeGhosts(position, index))
-    // ghostsCurrentPositon
-    score > highScore ? localStorage.setItem('highScore', score) : null
     playing = false
-    releaseGhostCount = 1
+    btncontainer.appendChild(startBtn)// remove start button
+    startBtn.style.removeProperty('width')
+    result === 'lose' ?  window.alert(`you lose. Your Score is ${score}`) : null
     result === 'win' ? level++  : score = 0 //bring up new board if they won the board if not reset score
-    level >= boards.length ? endGame() : setGame() // if there is another board then load it
+    level >= boards.length ? endGame('win') : loadLevel() // if there is another board then load it
   }
 
-  // can have an add wall function
-  // function saveBoard(board) {
-  //     for (let i = 0; i < cells.length; i++) {
-  //       board.push(cells[i])
-  //     }
-  //   }
-  //   saveBoard(board1) 
 
-  // }
-
-  const saveBoard = () => {
+  const editing = () => {
     // function to toggle wall class on cell that is clicked
     function addWalls(e) {
       const cellClasses = e.target.classList
@@ -384,8 +381,8 @@ function init() {
       console.log(e.target)
     }
     //create button to skip level when editing
-    //create button to print all the wall cells so that I can copy to the new board
     const body = document.querySelector('body')
+    //create button to print all the wall cells so that I can copy to the new board
     const printWallsBtn = document.createElement('BUTTON')
     printWallsBtn.innerText = 'print walls'
     const nextLevelbtn = document.createElement('BUTTON')
@@ -395,23 +392,22 @@ function init() {
 
     //function to print walls to console.log
     const printWalls = () => {
-      console.log(boards[level].walls)
+      for (let i = 0; i < boards[level].walls.length; i += 100)  { // in chunks so can be easily copy and pasted
+        console.log(boards[level].walls.slice(i))
+      }
     }
 
     //function to skip level
     const skipLevel = () => {
       endLevel('win')
-      console.log(boards[level].walls)
     }
     //event listeners
     grid.addEventListener('click', addWalls)
     printWallsBtn.addEventListener('click', printWalls)
     nextLevelbtn.addEventListener('click', skipLevel)
-
-
   }
 
-  saveBoard()
+  editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
