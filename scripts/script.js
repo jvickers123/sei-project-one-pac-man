@@ -74,7 +74,6 @@ function init() {
   board2.pushBoard()
   const blankBoard = new Board(11, 11, [], 0, [], 0, [])
   blankBoard.pushBoard()
-  console.log(boards)
   
   
 
@@ -220,27 +219,37 @@ function init() {
       const left = 37
       const up = 38
       const down = 40
+      let degrees
       removePacMan(pacManCurrentPosition)
       // if to check direction of key, whether the next square is a wall or edge of grid
       if (key === right && !cells[pacManCurrentPosition + 1].classList.contains(wallClass)) {
         pacManCurrentPosition++
+        degrees = 0
       } else if (key === left && !cells[pacManCurrentPosition - 1].classList.contains(wallClass)) {
         pacManCurrentPosition--
+        degrees = 180
       } else if (key === up && !!cells[pacManCurrentPosition - width] && !cells[pacManCurrentPosition - width].classList.contains(wallClass)) {
         pacManCurrentPosition -= width
+        degrees = 270
       } else if (key === down && !!cells[pacManCurrentPosition + width] && !cells[pacManCurrentPosition + width].classList.contains(wallClass)) {
         pacManCurrentPosition += width
+        degrees = 90
       //check to see if next square is off grid and then move to other side of screen
       } else if (key === right && cells[pacManCurrentPosition + 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
         pacManCurrentPosition -= width - 1
+        degrees = 0
       } else if (key === left && cells[pacManCurrentPosition - 1].getAttribute('y') !== cells[pacManCurrentPosition].getAttribute('y')) { 
         pacManCurrentPosition += width - 1
+        degrees = 180
       } else if (key === up && !cells[pacManCurrentPosition - width]) { 
         pacManCurrentPosition = cellCount - (width - pacManCurrentPosition)
+        degrees = 270
       } else if (key === down && !cells[pacManCurrentPosition + width]) { 
         pacManCurrentPosition = width - (cellCount - pacManCurrentPosition)
+        degrees = 90
       }
       addPacMan(pacManCurrentPosition)
+      cells[pacManCurrentPosition].style.transform = `rotate(${degrees}deg)`
       const currentCell = cells[pacManCurrentPosition]
       // if current position has food class
       if (currentCell.classList.contains(foodClass)) {
@@ -344,7 +353,8 @@ function init() {
     playing = false
     releaseGhostCount = 1
     level++ //bring up new board
-    setGame()
+    level >= boards.length ? console.log('end whole game') : setGame() // if there is another board then load it
+    
     
   }
 
@@ -394,20 +404,10 @@ function init() {
 
   }
 
-saveBoard()
+  saveBoard()
   //eventlisteners
-  //  start button (playame)
-  //  keydown (move pac man)
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
-
-
-  //EXTRA -----
-
-  //extra boards
-  //  once const cells array has been filled with starting classes 
-  //    hard code this array into something called board 1
-  //  do this for more boards and when restart game is pressed run function to update cells and starting position based on array
 }
 
 window.addEventListener('DOMContentLoaded', init)
