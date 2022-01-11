@@ -46,9 +46,10 @@ button {
   background-size: 60%;
 }
 
-.pac-man, .ghost {
+.pac-man, .ghost, .lives {
   background-size: cover;
 }
+
 .pac-man {
   background-image: url("../images/pac-man.gif");
 }
@@ -75,4 +76,16 @@ button {
 
 button {
   margin-top: 1rem;
+}
+
+#lives-container {
+  display: flex;
+  align-items: center;
+}
+
+.lives {
+  background-image: url("../images/lives.png");
+  height: 1rem;
+  width: 1rem;
+  margin: 0 0.2rem;
 }
