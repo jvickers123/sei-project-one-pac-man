@@ -13,7 +13,7 @@ function init() {
   const cells = []
 
   let score = 0
-  //  let high score = local storage
+  let highScore = localStorage.getItem('highScore')
   let lives = 3
   
 
@@ -83,7 +83,7 @@ function init() {
       colour = 'orange'
     }
     cells[position].classList.add(ghostClass, colour)
-    !!frightened ? cells[position].classList.add(frightenedClass) : null
+    frightened ? cells[position].classList.add(frightenedClass) : null
   }
 
   const removeGhosts = (position, index) => {
@@ -99,20 +99,20 @@ function init() {
       colour = 'orange'
     }
     cells[position].classList.remove(ghostClass, colour, frightenedClass)
-    // frightened ? cells[position].classList.remove(frightenedClass) : null
-    // frightened ? console.log(cells[position].classList) : null
   }
 
   const frightenedGhosts = () => {
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
     const removeFrightenedClass = () => ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
-    const endFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 15)
+    const endFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
 
   const setGame = () => {
     //reset game
     scoreDisplay.innerText = score
     livesDisplay.innerText = lives
+    highScore = localStorage.getItem('highScore')
+    highScoreDisplay.innerText = highScore
     pacManCurrentPosition = pacManStartingPosition
     ghostDirection.splice(0) //clears ghost direction
     ghostDirection.push(null) // adds direction for first ghost
@@ -303,6 +303,7 @@ function init() {
     removePacMan(pacManCurrentPosition)
     ghostsCurrentPositon.forEach((position, index) => removeGhosts(position, index))
     // ghostsCurrentPositon
+    score > highScore ? localStorage.setItem('highScore', score) : null
     lives = 3
     score = 0
     playing = false
@@ -330,14 +331,6 @@ function init() {
 
 
   //EXTRA -----
-
-  //flashy food function
-  //    triggered with extra check in pac man move if same square as flashy food
-  //    will need extra check in ghost move function to check if they are blue or not
-  //    then update movement away from pac man
-  //   will need extra check if pacman is in same cell of blue ghost in move pac man
-  //      if so need to ghost to middle and add score
-  //    set timeout for blue class to be removed
 
   //extra boards
   //  once const cells array has been filled with starting classes 
