@@ -67,12 +67,12 @@ function init() {
   board1.pushBoard()
   const board2 = new Board(31, 21, [4, 5, 6, 7, 8, 9, 10, 11, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26, 32, 33, 34, 35, 42, 43, 44, 45, 47, 48, 49, 50, 57, 58, 59, 60, 63, 68, 69, 71, 83, 85, 86, 91, 94, 96, 97, 102, 104, 105, 106, 107, 108, 109, 110, 111, 112, 114, 119, 120, 122, 125, 127, 128, 131, 132, 133, 139, 145, 146, 147, 150, 151, 153, 156, 164, 166, 168, 170, 172, 174, 176, 184, 187, 188, 189, 190, 192, 193, 197, 199, 201, 203, 205, 209, 210, 212, 213, 214, 215, 221, 230, 234, 243, 248, 249, 250, 251, 252, 254, 255, 257, 258, 260, 261, 262, 263, 264, 265, 266, 268, 269, 271, 272, 274, 275, 276, 277, 278, 285, 289, 291, 297, 299, 303, 310, 311, 312, 313, 314, 316, 317, 319, 320, 322, 323, 324, 325, 326, 327, 328, 330, 331, 333, 334, 336, 337, 338, 339, 340, 345, 348, 350, 362, 364, 367, 373, 374, 375, 376, 383, 384, 385, 386, 387, 388, 389, 390, 391, 398, 399, 400, 401, 404, 406, 409, 410, 411, 412, 422, 424, 425, 426, 427, 430, 432, 435, 437, 439, 440, 441, 445, 447, 448, 449, 451, 458, 459, 461, 463, 466, 474, 476, 478, 480, 482, 483, 485, 486, 494, 497, 498, 499, 500, 502, 503, 505, 507, 509, 514, 516, 519, 520, 522, 524, 525, 528, 530, 531, 533, 534, 536, 537, 538, 540, 541, 542, 543, 544, 545, 547, 548, 550, 551, 553, 554, 556, 559, 579, 587, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 605, 606, 607, 608, 612, 613, 614, 615, 616, 617, 618, 634, 636, 639, 640, 641, 642, 643], 263, [429, 407, 115, 101], 232, [356, 292, 293, 294, 295, 296 ]  )
   board2.pushBoard()
-  const blankBoard = new Board(11, 11, [], 0, [], 0, [])
+  const blankBoard = new Board(21, 21, [], 0, [], 0, [])
   blankBoard.pushBoard()
   
   
 
-//functions
+  //functions
 
   const addPacMan = (position) => cells[position].classList.add(pacManClass) //  add pac man class to current position
   const addGate = (position) => cells[position].classList.add(gateClass)
@@ -127,11 +127,26 @@ function init() {
     }
     cells[position].classList.remove(ghostClass, colour, frightenedClass)
   }
-
   const frightenedGhosts = () => {
+    console.log(this)
+    let alreadyFrightened = false
+    // let endFrightenedTimer
+    let id =
+    cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
-    const removeFrightenedClass = () => ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
-    const endFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
+    const removeFrightenedClass = () => {
+      ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
+      id = this
+      console.log(this)
+    }
+    console.log('already frightened', alreadyFrightened)
+    const startClock = () => setTimeout(removeFrightenedClass, 1000 * 5)
+    alreadyFrightened ? id.clearInterval.apply() : null
+    startClock() 
+
+
+    // alreadyFrightened ? resetTimer() : null
+
   }
 
   const resetGame = () => {
@@ -150,8 +165,8 @@ function init() {
       cell ? grid.removeChild(cell) : null
     }
     cells.splice(0) // empty cells array
-      
   }
+
   const loadLevel = () => {
     resetGame()
     //set variables
