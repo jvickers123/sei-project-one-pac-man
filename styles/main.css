@@ -23,16 +23,13 @@ button {
   background: black;
 }
 
-/* #grid div{
-
-} */
-
 .wall {
+  /* background: #7DFDFE; */
   background: blue;
 }
 
 .gate {
-  background: orange;
+  background: rgb(254, 207, 0);
 }
 
 .food {
@@ -105,4 +102,11 @@ form {
   display: flex;
   flex-direction: column;
   background: grey;
+}
+
+h1 {
+  font-family: 'Monoton', cursive;
+  font-size: 3rem;
+  font-weight: lighter;
+  /* color: #FFFF00; */
 }

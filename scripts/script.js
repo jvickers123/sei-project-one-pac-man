@@ -401,62 +401,62 @@ function init() {
   }
 
   // check leaderboard
-  const updateLeaderBoard = (username, score) => {
-    // for (let i = 0; i < leaderBoard.length; i++) {
-    //   //target score
-    //   if (leaderBoard[i]) {
-    //     const leaderScore = parseInt(leaderBoard[i].split(' ')[1])
-    //     if (score > leaderScore) {
-    //       localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
-    //       return
-    //     }
-    //   } else {
-    //     localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
-    //   }
+  // const updateLeaderBoard = (username, score) => {
+  //   // for (let i = 0; i < leaderBoard.length; i++) {
+  //   //   //target score
+  //   //   if (leaderBoard[i]) {
+  //   //     const leaderScore = parseInt(leaderBoard[i].split(' ')[1])
+  //   //     if (score > leaderScore) {
+  //   //       localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
+  //   //       return
+  //   //     }
+  //   //   } else {
+  //   //     localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
+  //   //   }
 
-    //   //check if greater than
-    //   // score > leader
-    //   //if yes then update storage
-    //   //
-    // }
+  //   //   //check if greater than
+  //   //   // score > leader
+  //   //   //if yes then update storage
+  //   //   //
+  //   // }
 
-    //create an array that holds top five scores in order
-    const top5Array = leaderBoard.map(item => {
-      if (item && !isNaN(item[1])) {
-        const stringArr = item.split(' ')
-        const valuePairs = []
-        valuePairs.push(stringArr[0])
-        valuePairs.push(parseInt(stringArr[1]))
-        return valuePairs
-      } else {
-        return [' ', 0]
-      }
-    })
-    const orderedTop5 = top5Array.sort((a, b) => b[1] - a[1])
-    console.log(orderedTop5)
-    // if score above bottom score // pop and push
-    if (score > orderedTop5[4][1] || isNaN(orderedTop5[4][1])) {
-      orderedTop5.pop()
-      const newArr = [username, score]
-      orderedTop5.push(newArr)
-    }
-    // put scores in order
-    const newOrderedTop5 = orderedTop5.sort((a, b) => b[1] - a[1])
-    // update local storage
-    newOrderedTop5.forEach((item, index) => {
-      window.localStorage.setItem(`leaderBoard${index}`, `${item[0]} ${item[1]}`)
-    })
-    // leaderBoard = [localStorage.getItem('leaderBoard0'), localStorage.getItem('leaderBoard1'), localStorage.getItem('leaderBoard2'), localStorage.getItem('leaderBoard3'), localStorage.getItem('leaderBoard4')]
-    console.log(newOrderedTop5)
+  //   //create an array that holds top five scores in order
+  //   const top5Array = leaderBoard.map(item => {
+  //     if (item && !isNaN(item[1])) {
+  //       const stringArr = item.split(' ')
+  //       const valuePairs = []
+  //       valuePairs.push(stringArr[0])
+  //       valuePairs.push(parseInt(stringArr[1]))
+  //       return valuePairs
+  //     } else {
+  //       return [' ', 0]
+  //     }
+  //   })
+  //   const orderedTop5 = top5Array.sort((a, b) => b[1] - a[1])
+  //   console.log(orderedTop5)
+  //   // if score above bottom score // pop and push
+  //   if (score > orderedTop5[4][1] || isNaN(orderedTop5[4][1])) {
+  //     orderedTop5.pop()
+  //     const newArr = [username, score]
+  //     orderedTop5.push(newArr)
+  //   }
+  //   // put scores in order
+  //   const newOrderedTop5 = orderedTop5.sort((a, b) => b[1] - a[1])
+  //   // update local storage
+  //   newOrderedTop5.forEach((item, index) => {
+  //     window.localStorage.setItem(`leaderBoard${index}`, `${item[0]} ${item[1]}`)
+  //   })
+  //   // leaderBoard = [localStorage.getItem('leaderBoard0'), localStorage.getItem('leaderBoard1'), localStorage.getItem('leaderBoard2'), localStorage.getItem('leaderBoard3'), localStorage.getItem('leaderBoard4')]
+  //   console.log(newOrderedTop5)
 
-    // push other scores down one
-    //update display
-  }
+  //   // push other scores down one
+  //   //update display
+  // }
  
   
   const endGame = (result) => {
     result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
-    updateLeaderBoard(userName, score)
+    // updateLeaderBoard(userName, score)
     // score > highScore ? localStorage.setItem('highScore', `${userName} ${score}`) : null
     level = 0
     endLevel()
