@@ -128,25 +128,14 @@ function init() {
     cells[position].classList.remove(ghostClass, colour, frightenedClass)
   }
   const frightenedGhosts = () => {
-    console.log(this)
     let alreadyFrightened = false
-    // let endFrightenedTimer
-    let id =
+    // let removeFrightenedTimer
     cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
+    alreadyFrightened ? clearTimeout(removeFrightenedTimer) : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
-    const removeFrightenedClass = () => {
-      ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
-      id = this
-      console.log(this)
-    }
+    const removeFrightenedClass = () => ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
     console.log('already frightened', alreadyFrightened)
-    const startClock = () => setTimeout(removeFrightenedClass, 1000 * 5)
-    alreadyFrightened ? id.clearInterval.apply() : null
-    startClock() 
-
-
-    // alreadyFrightened ? resetTimer() : null
-
+    removeFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
 
   const resetGame = () => {
@@ -386,6 +375,23 @@ function init() {
     level >= boards.length ? endGame('win') : loadLevel() // if there is another board then load it
   }
 
+  // create starting plate
+  // maybe enter Username
+  // leaderboard
+  
+  // need to move pac man after losing life
+  
+  //add music 
+  // for eating food
+  // for start
+  // for losing life
+  // for eating big food
+  // for eating blue ghost
+
+
+  // create ending plate
+  // create div
+  // 
 
   const editing = () => {
     // function to toggle wall class on cell that is clicked
