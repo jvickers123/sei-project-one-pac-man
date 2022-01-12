@@ -6,6 +6,13 @@ function init() {
   const livesDisplay = document.querySelector('#lives-container')
   const startBtn = document.querySelector('#start-game')
   const btncontainer = document.querySelector('#buttons-container')
+  const userNameDisplay = document.querySelector('#username')
+  //target title and display containers 
+  const scoreContainer = document.querySelector('#scores-container')
+  //target form
+  const form = document.querySelector('form')
+  //target submit
+  const submitBtn = document.querySelector('#submit')
 
   //variables
   let width
@@ -15,10 +22,11 @@ function init() {
   let score = 0
   let highScore = localStorage.getItem('highScore')
   let lives
-  // const life = document.createElement('div')
   startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
   let level = 0
+  let difficulty = 4
+  let userName 
 
   //timerouts and intervals
   let moveGhostInterval //give intervals global scope so can be stopped after end game
@@ -188,6 +196,7 @@ function init() {
       life.classList.add(livesClass)
       livesDisplay.appendChild(life)
     }
+    userNameDisplay.innerText = userName
 
     //create grid
     grid.style.width = `${width * 1.25}rem`// make grid based on width
@@ -218,7 +227,7 @@ function init() {
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
   // level = 3
-  loadLevel()
+  // loadLevel()
 
   const collision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
@@ -235,7 +244,7 @@ function init() {
         addPacMan(pacManCurrentPosition)
       }
       const life = document.querySelector('.lives')
-      lives < 0 ? endLevel('lose') : livesDisplay.removeChild(life)
+      lives < 0 ? endGame('lose') : livesDisplay.removeChild(life)
     }
   }
 
@@ -283,7 +292,7 @@ function init() {
       // if current position has food class
       if (currentCell.classList.contains(foodClass)) {
         currentCell.classList.remove(foodClass)
-        score += 100
+        score += (20 * difficulty)
         scoreDisplay.innerText = score
       }
       // bigFood chek
@@ -381,14 +390,14 @@ function init() {
 
   const playGame = () => {
     playing = true
-    moveGhostInterval = setInterval(moveGhosts, 300) // start moving ghosts
+    moveGhostInterval = setInterval(moveGhosts, 100 * (10 - difficulty)) // start moving ghosts
     releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
     btncontainer.removeChild(startBtn)// remove start button
   }
   
   const endGame = (result) => {
     result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
-    score > highScore ? localStorage.setItem('highScore', score) : null
+    score > highScore ? localStorage.setItem('highScore', `${userName} ${score}`) : null
     level = 0
     endLevel()
   }
@@ -406,16 +415,26 @@ function init() {
   }
 
 
-
-
-
+  function submitForm(e) {
+    e.preventDefault()
+    const userNameInput = document.querySelector('#user-name-text').value // get username
+    const difficultyInput = document.querySelector('#slider').value
+    userName = userNameInput
+    difficulty = difficultyInput
+    scoreContainer.style.display = 'flex'
+    btncontainer.style.display = 'flex'
+    form.style.display = 'none'
+    loadLevel()
+  } 
   // create starting plate
-  // create div and inner HTML with a form for username and submit button
-  // save username to local storage on submit button press
-  // delete div
-  // maybe enter Username
-  // leaderboard
-  //change css for leaderboard
+  const startScreen = () => {
+    scoreContainer.style.display = 'none'
+    btncontainer.style.display = 'none'
+  }
+  startScreen()
+  localStorage.clear()
+  
+  
   
   
   //add music 
@@ -457,8 +476,9 @@ function init() {
 
     //function to skip level
     const skipLevel = () => {
-      endLevel('win')
+      endGame('lose')
     }
+
     //event listeners
     grid.addEventListener('click', addWalls)
     printWallsBtn.addEventListener('click', printWalls)
@@ -469,6 +489,7 @@ function init() {
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
+  submitBtn.addEventListener('click', submitForm)
 }
 
 window.addEventListener('DOMContentLoaded', init)

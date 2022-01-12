@@ -8,13 +8,26 @@
   <body>
     <h1>Jonny's Pac Man Game</h1>
     <div id="scores-container">
-      <p>Score: <span id="score"></span></p>
+      <p id="username"></p>
       <div id="lives-container">
         <p>Lives: </p>
       </div>
+      <p>Score: <span id="score"></span></p>
       <p>High Score: <span id="high-score"></span></p>
     </div>
-    <div id="grid-leaderboard-container">
+    <form id="starting-plate" method="POST" action="">
+      <div id="username-container">
+        <label for="user-name">Enter Username: </label>
+        <input type="text" id="user-name-text" name="user-name">
+      </div>
+      <div id="difficulty-container">
+        <label for="slider">Select Difficulty: </label>
+        <input type="range" name="slider" min="1" max="9" value="5" id="slider">
+      </div>
+      <button id="submit">Start Game!</button>
+    </form>
+    <div id="middle-container">
+      <div id="instructions"></div>
       <div id="grid"></div>
       <div id="leaderboard"></div>
     </div>

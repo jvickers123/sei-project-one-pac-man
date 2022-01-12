@@ -90,15 +90,19 @@ button {
   margin: 0 0.2rem;
 }
 
-#grid-leaderboard-container{
+#middle-container {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: center;
+  justify-content: space-around;
 }
 
-#leaderboard {
+#leaderboard, #instructions {
   border: 1px solid red;
-  position: absolute;
-  
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  background: grey;
 }
