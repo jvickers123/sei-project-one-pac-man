@@ -89,3 +89,16 @@ button {
   width: 1rem;
   margin: 0 0.2rem;
 }
+
+#grid-leaderboard-container{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+}
+
+#leaderboard {
+  border: 1px solid red;
+  position: absolute;
+  
+}

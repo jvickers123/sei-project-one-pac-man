@@ -19,9 +19,13 @@ function init() {
   startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
   let level = 0
+
+  //timerouts and intervals
   let moveGhostInterval //give intervals global scope so can be stopped after end game
   let releaseGhostsInterval
   let releaseGhostCount//give global scope so it can be reset in endgame
+  let removeFrightenedTimer
+
   
   //classes
   const wallClass = 'wall'
@@ -43,6 +47,8 @@ function init() {
   const ghostsCurrentPositon = []
   const ghostDirection = []
   let playing = false
+  let chasePacMan = true
+
 
   // new Board Class
   class Board {
@@ -70,8 +76,6 @@ function init() {
   const blankBoard = new Board(21, 21, [], 0, [], 0, [])
   blankBoard.pushBoard()
   
-  
-
   //functions
 
   const addPacMan = (position) => cells[position].classList.add(pacManClass) //  add pac man class to current position
@@ -127,13 +131,17 @@ function init() {
     }
     cells[position].classList.remove(ghostClass, colour, frightenedClass)
   }
+
   const frightenedGhosts = () => {
     let alreadyFrightened = false
-    // let removeFrightenedTimer
+    chasePacMan = false
     cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
     alreadyFrightened ? clearTimeout(removeFrightenedTimer) : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
-    const removeFrightenedClass = () => ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
+    const removeFrightenedClass = () => {
+      ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
+      chasePacMan = true // move back to ghosts chasing pacman
+    }
     console.log('already frightened', alreadyFrightened)
     removeFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
@@ -212,7 +220,6 @@ function init() {
   // level = 3
   loadLevel()
 
- 
   const collision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
@@ -223,6 +230,9 @@ function init() {
         addGhost(ghostsCurrentPositon[index], index, true)
       } else {
         lives--
+        removePacMan(pacManCurrentPosition)
+        pacManCurrentPosition = pacManStartingPosition
+        addPacMan(pacManCurrentPosition)
       }
       const life = document.querySelector('.lives')
       lives < 0 ? endLevel('lose') : livesDisplay.removeChild(life)
@@ -293,21 +303,43 @@ function init() {
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
     ghostsCurrentPositon.forEach((position, index) => {
-      let frightened 
+      let frightened
       cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
       removeGhosts(position, index) //: removeGhosts(position)
       const pickDirection = (direction) => {
         if (direction === null) {
-          const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
-          //if to check if square below is wall
-          if (option === 'right') {
-            !cells[position + 1].classList.contains(wallClass) ? ghostDirection[index] = 'right' : pickDirection(null)
-          } else if (option === 'left') {
-            !cells[position - 1].classList.contains(wallClass) ? ghostDirection[index] = 'left' : pickDirection(null)
-          } else if (option === 'up') {
-            !cells[position - width].classList.contains(wallClass) ? ghostDirection[index] = 'up' : pickDirection(null)
-          } else if (option === 'down') {
-            !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
+          if (chasePacMan) { //ghosts move towards pacman
+            // pac coordinates
+            const pacX = parseInt(cells[pacManCurrentPosition].getAttribute('x'))
+            const pacY = parseInt(cells[pacManCurrentPosition].getAttribute('y'))
+            //ghost coordinates
+            const ghostX = parseInt(cells[position].getAttribute('x'))
+            const ghostY = parseInt(cells[position].getAttribute('y'))
+            
+            if (pacX >= ghostX && !cells[position + 1].classList.contains(wallClass)) {// if pac below ghost && cell to right doesn't contain wall then direction = 'right otherwise try another direction
+              ghostDirection[index] = 'right'
+            } else if (pacY >= ghostY && !cells[position + width].classList.contains(wallClass)) {
+              ghostDirection[index] = 'down'
+            } else if (pacX <= ghostX && !cells[position - 1].classList.contains(wallClass)) {
+              ghostDirection[index] = 'left'
+            } else if (pacY <= ghostY && !cells[position - width].classList.contains(wallClass)) {
+              ghostDirection[index] = 'up'
+            }  else {
+              chasePacMan = false // if there is no way to get near pac without hitting a wall then pick direction with random choice
+              pickDirection(null)
+              chasePacMan = true // return to moving towards pac man
+            }
+          } else {
+            const option = directionOptions[Math.floor(Math.random() * 4)] //picks random direction
+            if (option === 'right') {
+              !cells[position + 1].classList.contains(wallClass) ? ghostDirection[index] = 'right' : pickDirection(null)
+            } else if (option === 'left') {
+              !cells[position - 1].classList.contains(wallClass) ? ghostDirection[index] = 'left' : pickDirection(null)
+            } else if (option === 'up') {
+              !cells[position - width].classList.contains(wallClass) ? ghostDirection[index] = 'up' : pickDirection(null)
+            } else if (option === 'down') {
+              !cells[position + width].classList.contains(wallClass) ? ghostDirection[index] = 'down' : pickDirection(null)
+            }
           }          
         }
         return direction
@@ -331,8 +363,6 @@ function init() {
     })
   }
 
-  
-
   const releaseGhosts = () => {
     if (releaseGhostCount < ghostsStartingPosition.length) {// if count is lower than no. ghosts
       const index = releaseGhostCount
@@ -351,7 +381,7 @@ function init() {
 
   const playGame = () => {
     playing = true
-    moveGhostInterval = setInterval(moveGhosts, 500) // start moving ghosts
+    moveGhostInterval = setInterval(moveGhosts, 300) // start moving ghosts
     releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
     btncontainer.removeChild(startBtn)// remove start button
   }
@@ -375,11 +405,18 @@ function init() {
     level >= boards.length ? endGame('win') : loadLevel() // if there is another board then load it
   }
 
+
+
+
+
   // create starting plate
+  // create div and inner HTML with a form for username and submit button
+  // save username to local storage on submit button press
+  // delete div
   // maybe enter Username
   // leaderboard
+  //change css for leaderboard
   
-  // need to move pac man after losing life
   
   //add music 
   // for eating food
