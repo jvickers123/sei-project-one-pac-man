@@ -22,7 +22,8 @@ function init() {
   const cells = []
   let score = 0
   // let highScore = localStorage.getItem('highScore')
-  const leaderBoard = [window.localStorage.getItem('leaderBoard0'), localStorage.getItem('leaderBoard1'), localStorage.getItem('leaderBoard2'), localStorage.getItem('leaderBoard3'), localStorage.getItem('leaderBoard4')]
+  // 'username,3,username2,4' //
+  const leaderBoard = window.localStorage.getItem('leaderboard')
   let lives
   startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
@@ -453,10 +454,40 @@ function init() {
   //   //update display
   // }
  
-  
+  const updateLeaderBoard = (username, score) => {
+    const top5 = leaderBoard.split(',')
+    const pairedTop5 = []
+    //make array of key value pairedTop5
+    top5.forEach((item, index) => {
+      const pair = []
+      if (index % 2 === 0) {
+        pair.push(item, parseInt(top5[index + 1]))
+        pairedTop5.push(pair)
+      }
+    })
+    console.log(pairedTop5)
+    pairedTop5.sort((a, b) => b[1] - a[1])
+    //order array
+    if (pairedTop5[4]) {
+      if (score > pairedTop5[4][1]) {
+        pairedTop5.pop()
+        pairedTop5.push([username, score])
+        pairedTop5.sort((a, b) => b[1] - a[1])
+        window.localStorage.setItem('leaderboard', pairedTop5)
+      }
+    } else {
+      pairedTop5.push([username, score])
+      pairedTop5.sort((a, b) => b[1] - a[1])
+      window.localStorage.setItem('leaderboard', pairedTop5)
+    }
+    console.log(pairedTop5)
+    // add this score to array
+    // load to local storage
+  }
+  updateLeaderBoard()
   const endGame = (result) => {
     result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
-    // updateLeaderBoard(userName, score)
+    updateLeaderBoard(userName, score)
     // score > highScore ? localStorage.setItem('highScore', `${userName} ${score}`) : null
     level = 0
     endLevel()
