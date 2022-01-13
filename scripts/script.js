@@ -2,21 +2,33 @@ function init() {
   //elements
   const grid = document.querySelector('#grid')
   const scoreDisplay = document.querySelector('#score')
-  // const highScoreDisplay = document.querySelector('#high-score')
   const livesDisplay = document.querySelector('#lives-container')
   const startBtn = document.querySelector('#start-game')
   const btncontainer = document.querySelector('#buttons-container')
   const userNameDisplay = document.querySelector('#username')
   const leaderboardDisplay = document.querySelector('#leaderboard')
-  // const leaderboardDisplay = document.querySelector('#leaderboard')
-  //target title and display containers 
   const scoreContainer = document.querySelector('#scores-container')
   const middleContainer = document.querySelector('#middle-container')
-  //target form
   const form = document.querySelector('form')
   const endScreen = document.querySelector('#end-screen')
-  //target submit
   const submitBtn = document.querySelector('#submit')
+
+  //audio
+  const mainAudio = new Audio('sounds/main-tune.mp3')
+  const eatingAudio = new Audio('sounds/food.mp3')
+  const bigFoodAudio = new Audio('sounds/big-food.mp3')
+  const bigFoodEndAudio = new Audio('sounds/big-food-end.mp3')
+  const eatghostAudio = new Audio('sounds/eat-ghost.mp3')
+  const loseLifeAudio = new Audio('sounds/lose-life.mp3')
+  const loseGameAudio = new Audio('sounds/lose-game.mp3')
+  const winGameAudio = new Audio('sounds/win-game.mp3')
+  mainAudio.volume = 0.3
+  eatingAudio.volume = 0.2
+  bigFoodAudio.volume = 0.4
+  bigFoodEndAudio.volume = 0.4
+  loseLifeAudio.volume = 0.3
+  loseGameAudio.volume = 0.1
+  winGameAudio.volume = 0.2
 
   //variables
   let width
@@ -152,12 +164,14 @@ function init() {
   }
 
   const frightenedGhosts = () => {
+    bigFoodAudio.play()
     let alreadyFrightened = false
     chasePacMan = false
     cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
     alreadyFrightened ? clearTimeout(removeFrightenedTimer) : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
     const removeFrightenedClass = () => {
+      bigFoodEndAudio.play()
       ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
       chasePacMan = true // move back to ghosts chasing pacman
     }
@@ -169,10 +183,9 @@ function init() {
     //reset game
     clearInterval(moveGhostInterval)
     clearInterval(releaseGhostsInterval)
-    for (let i = 0; i < lives; i++) { //reset life display
-      const life = document.querySelector('.lives')
-      livesDisplay.removeChild(life)
-    }
+    //reset life display
+    const lives = document.querySelectorAll('.lives')
+    lives.forEach(life => livesDisplay.removeChild(life))
     ghostDirection.splice(0) //clears ghost direction
     ghostDirection.push(null) // adds direction for first ghost
     ghostsCurrentPositon.splice(0)
@@ -187,7 +200,6 @@ function init() {
   }
 
   const loadLevel = () => {
-    console.log(leaderboard)
     resetGame()
     //set variables
     width = boards[level].width
@@ -200,10 +212,7 @@ function init() {
     ghostsStartingPosition = boards[level].ghosts
     releaseGhostCount = 1
     lives = 5
-    // highScore = localStorage.getItem('highScore')
-    // leaderboardStorage = window.localStorage.getItem('leaderboard')
     pacManCurrentPosition = pacManStartingPosition
-
 
     //set display
     scoreDisplay.innerText = score
@@ -213,7 +222,6 @@ function init() {
       score.innerText = `${index + 1} ${item[0]} ${item[1]}`
       leaderboardDisplay.appendChild(score)
     })
-    // highScoreDisplay.innerText = highScore
     for (let i = 1; i <= lives; i++) { //create lives display
       const life = document.createElement('div')
       life.classList.add(livesClass)
@@ -249,18 +257,18 @@ function init() {
     ghostsStartingPosition.forEach((position, index) => addGhost(position, index))
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
-  // level = 3
-  // loadLevel()
 
   const collision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
+        eatghostAudio.play()
         score += 250
         const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
         removeGhosts(parseInt(cell.id), index)
         ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
         addGhost(ghostsCurrentPositon[index], index, true)
       } else {
+        loseLifeAudio.play()
         lives--
         removePacMan(pacManCurrentPosition)
         pacManCurrentPosition = pacManStartingPosition
@@ -314,6 +322,7 @@ function init() {
       const currentCell = cells[pacManCurrentPosition]
       // if current position has food class
       if (currentCell.classList.contains(foodClass)) {
+        eatingAudio.play()
         currentCell.classList.remove(foodClass)
         score += (20 * difficulty)
         scoreDisplay.innerText = score
@@ -347,7 +356,6 @@ function init() {
             //ghost coordinates
             const ghostX = parseInt(cells[position].getAttribute('x'))
             const ghostY = parseInt(cells[position].getAttribute('y'))
-            
             if (pacX >= ghostX && !cells[position + 1].classList.contains(wallClass)) {// if pac below ghost && cell to right doesn't contain wall then direction = 'right otherwise try another direction
               ghostDirection[index] = 'right'
             } else if (pacY >= ghostY && !cells[position + width].classList.contains(wallClass)) {
@@ -413,6 +421,8 @@ function init() {
 
   const playGame = () => {
     playing = true
+    mainAudio.loop = true
+    mainAudio.play()
     moveGhostInterval = setInterval(moveGhosts, 100 * (10 - difficulty)) // start moving ghosts
     releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
     btncontainer.removeChild(startBtn)// remove start button
@@ -458,6 +468,10 @@ function init() {
   }
 
   const endGame = (result) => {
+    clearInterval(moveGhostInterval)
+    clearInterval(releaseGhostsInterval)
+    mainAudio.pause()
+    result === ('win') ? winGameAudio.play() : loseGameAudio.play()
     // update leaderboard
     updateLeaderBoard(userName, score)
     // minimise middle container scores and buttons
@@ -466,7 +480,7 @@ function init() {
     middleContainer.style.display = 'none'
     // create div
     const text = document.createElement('p')
-    result === 'win' ? text.innerHTML = `<span id="congratulations">Congratulations ${userName}!</span> </br> You cleared all the boards! </br> Your Score: ${score}` : `<span id="unlucky">Unlucky ${userName}! </br> You cleared ${level} boards </br> Your Score: ${score}`
+    result === 'win' ? text.innerHTML = `<span id="congratulations">Congratulations ${userName}!</span> </br> You cleared all the boards! </br> Your Score: ${score}` : text.innerHTML = `<span id="unlucky">Unlucky ${userName}! </br> You cleared ${level} boards </br> Your Score: ${score}`
     endScreen.appendChild(text)
     // add leaderboard
     endScreen.appendChild(leaderboardDisplay)
@@ -483,8 +497,8 @@ function init() {
     button.addEventListener('click', startScreen)
   }
   
-  //  end levelresult)
   const endLevel = (result) => {
+    mainAudio.pause()
     removePacMan(pacManCurrentPosition)
     ghostsCurrentPositon.forEach((position, index) => removeGhosts(position, index))
     playing = false
@@ -496,7 +510,7 @@ function init() {
   }
 
 
-  function submitForm(e) {
+  function handleStartGame(e) {
     e.preventDefault()
     const userNameInput = document.querySelector('#user-name-text').value.replace(/\s/g, '') // get username
     const difficultyInput = document.querySelector('#slider').value
@@ -509,7 +523,6 @@ function init() {
     updateLeaderBoard(userName, 0)
     loadLevel()
   } 
-  // create starting plate
   const startScreen = () => {
     scoreContainer.style.display = 'none'
     btncontainer.style.display = 'none'
@@ -518,22 +531,10 @@ function init() {
     form.style.display = 'flex'
     middleContainer.appendChild(leaderboardDisplay)
   }
+
   startScreen()
-  
-  
-  
-  
-  //add music 
-  // for eating food
-  // for start
-  // for losing life
-  // for eating big food
-  // for eating blue ghost
 
-
-  // create ending plate
-  // create div
-  // 
+ 
 
   const editing = () => {
     // function to toggle wall class on cell that is clicked
@@ -571,13 +572,12 @@ function init() {
     nextLevelbtn.addEventListener('click', skipLevel)
   }
   // window.localStorage.clear()
-  console.log(leaderboardStorage)
 
   editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
-  submitBtn.addEventListener('click', submitForm)
+  submitBtn.addEventListener('click', handleStartGame)
 }
 
 window.addEventListener('DOMContentLoaded', init)
