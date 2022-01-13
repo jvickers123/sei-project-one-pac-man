@@ -110,3 +110,7 @@ h1 {
   font-weight: lighter;
   /* color: #FFFF00; */
 }
+
+#end-screen {
+  flex-direction: column;
+}

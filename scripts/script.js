@@ -14,6 +14,7 @@ function init() {
   const middleContainer = document.querySelector('#middle-container')
   //target form
   const form = document.querySelector('form')
+  const endScreen = document.querySelector('#end-screen')
   //target submit
   const submitBtn = document.querySelector('#submit')
 
@@ -457,11 +458,29 @@ function init() {
   }
 
   const endGame = (result) => {
-    result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
+    // update leaderboard
     updateLeaderBoard(userName, score)
-    // score > highScore ? localStorage.setItem('highScore', `${userName} ${score}`) : null
+    // minimise middle container scores and buttons
+    scoreContainer.style.display = 'none'
+    btncontainer.style.display = 'none'
+    middleContainer.style.display = 'none'
+    // create div
+    const text = document.createElement('p')
+    result === 'win' ? text.innerHTML = `<span id="congratulations">Congratulations ${userName}!</span> </br> You cleared all the boards! </br> Your Score: ${score}` : `<span id="unlucky">Unlucky ${userName}! </br> You cleared ${level} boards </br> Your Score: ${score}`
+    endScreen.appendChild(text)
+    // add leaderboard
+    endScreen.appendChild(leaderboardDisplay)
+    // add button
+    const button = document.createElement('button')
+    result === 'win' ? button.innerText = 'Start Again!' : button.innerText = 'Try Again!' 
+    endScreen.appendChild(button)
+    endScreen.style.display = 'flex'
+    console.log(endScreen.style.display)
+    //reset game
     level = 0
-    endLevel()
+    score = 0
+    //button sends back to start
+    button.addEventListener('click', startScreen)
   }
   
   //  end levelresult)
@@ -495,6 +514,9 @@ function init() {
     scoreContainer.style.display = 'none'
     btncontainer.style.display = 'none'
     middleContainer.style.display = 'none'
+    endScreen.style.display = 'none'
+    form.style.display = 'flex'
+    middleContainer.appendChild(leaderboardDisplay)
   }
   startScreen()
   
@@ -540,7 +562,7 @@ function init() {
 
     //function to skip level
     const skipLevel = () => {
-      endGame('lose')
+      endLevel('win')
     }
 
     //event listeners
