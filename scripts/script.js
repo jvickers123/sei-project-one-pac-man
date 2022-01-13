@@ -13,6 +13,7 @@ function init() {
   const endScreen = document.querySelector('#end-screen')
   const submitBtn = document.querySelector('#submit')
   const muteBtn = document.querySelector('#mute')
+  const title = document.querySelector('h1')
 
   //audio
   const mainAudio = new Audio('sounds/main-tune.mp3')
@@ -219,7 +220,7 @@ function init() {
     leaderboard.forEach((item, index) => {
       const score = document.createElement('p')
       score.classList.add('leader')
-      score.innerText = `${index + 1} ${item[0]} ${item[1]}`
+      score.innerHTML = `${index + 1} <span class="leaderboard-username">${item[0]}</span> ${item[1]}`
       leaderboardDisplay.appendChild(score)
     })
     for (let i = 1; i <= lives; i++) { //create lives display
@@ -521,6 +522,7 @@ function init() {
     scoreContainer.style.display = 'flex'
     btncontainer.style.display = 'flex'
     middleContainer.style.display = 'flex'
+    title.style.display = 'block'
     form.style.display = 'none'
     updateLeaderBoard(userName, 0)
     loadLevel()
@@ -530,6 +532,7 @@ function init() {
     btncontainer.style.display = 'none'
     middleContainer.style.display = 'none'
     endScreen.style.display = 'none'
+    title.style.display = 'none'
     form.style.display = 'flex'
     middleContainer.appendChild(leaderboardDisplay)
   }
@@ -538,11 +541,11 @@ function init() {
     if (muted) {
       playing ? mainAudio.play() : null
       muted = false
-      muteBtn.style.textDecoration = 'none'
+      muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'
     } else {
       mainAudio.pause()
       muted = true
-      muteBtn.style.textDecoration = 'line-through'
+      muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>'
     }
   }
   startScreen()
@@ -586,7 +589,7 @@ function init() {
   }
   // window.localStorage.clear()
 
-  editing()
+  // editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
