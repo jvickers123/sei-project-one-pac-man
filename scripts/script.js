@@ -445,7 +445,7 @@ function init() {
       // console.log(leaderboard)
       leaderboard.sort((a, b) => b[1] - a[1])
       //order array
-      if (leaderboard[4]) {
+      if (leaderboard[9]) {
         if (score > leaderboard[4][1]) {
           leaderboard.pop()
           leaderboard.push([username, score])

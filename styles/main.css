@@ -6,6 +6,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: #ffee00;
+  background: black;
+  text-shadow: 0 0 2px #ffee00;
+  font-family: 'Press Start 2P', cursive;
+  font-weight: lighter;
+  line-height: 1.5rem;
 }
 
 #scores-container {
@@ -21,15 +27,24 @@ button {
 #grid {
   display: grid;
   background: black;
+  padding: 1.25rem 0;
+  /* margin: 0 auto; */
+}
+
+#middle-container > * {
+  border: 0.1rem solid blue;
+  box-shadow: 0 0 1.5rem blue;
 }
 
 .wall {
-  /* background: #7DFDFE; */
-  background: blue;
+  border: 0.2px solid #0ff;
+  box-shadow: 0 0 10px #0ff, inset 0 0 5px #0ff;
 }
 
 .gate {
-  background: rgb(254, 207, 0);
+  /* background: #ffae00; */
+  border: 0.2px solid #ffc800;
+  box-shadow: 0 0 10px #ffc800, inset 0 0 5px #ffc800;
 }
 
 .food {
@@ -45,6 +60,8 @@ button {
 
 .pac-man, .ghost, .lives {
   background-size: cover;
+
+
 }
 
 .pac-man {
@@ -85,6 +102,8 @@ button {
   height: 1rem;
   width: 1rem;
   margin: 0 0.2rem;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ffee00;
 }
 
 #middle-container {
@@ -92,10 +111,7 @@ button {
   flex-direction: row;
   width: 100%;
   justify-content: space-around;
-}
-
-#leaderboard, #instructions {
-  border: 1px solid red;
+  align-items: center;
 }
 
 form {
@@ -105,16 +121,31 @@ form {
 }
 
 h1 {
-  font-family: 'Monoton', cursive;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: lighter;
-  /* color: #FFFF00; */
+  text-shadow: 0 0 10px #ffee00;
 }
 
+h3 {
+  font-size: 1rem;
+}
+
+p {
+  font-size: 0.9rem;
+}
+
+#instructions-text {
+  font-size: 0.8rem;
+}
 #end-screen {
   flex-direction: column;
 }
 
+#instructions, #leaderboard{
+  word-wrap: break-word;
+  width: 15rem;
+  padding: 0.2rem 0.5rem;
+}
 #mute {
   text-decoration: line-through;
 }
