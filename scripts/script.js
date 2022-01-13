@@ -2,14 +2,16 @@ function init() {
   //elements
   const grid = document.querySelector('#grid')
   const scoreDisplay = document.querySelector('#score')
-  const highScoreDisplay = document.querySelector('#high-score')
+  // const highScoreDisplay = document.querySelector('#high-score')
   const livesDisplay = document.querySelector('#lives-container')
   const startBtn = document.querySelector('#start-game')
   const btncontainer = document.querySelector('#buttons-container')
   const userNameDisplay = document.querySelector('#username')
-  // const leaderBoardDisplay = document.querySelector('#leaderboard')
+  const leaderboardDisplay = document.querySelector('#leaderboard')
+  // const leaderboardDisplay = document.querySelector('#leaderboard')
   //target title and display containers 
   const scoreContainer = document.querySelector('#scores-container')
+  const middleContainer = document.querySelector('#middle-container')
   //target form
   const form = document.querySelector('form')
   //target submit
@@ -23,7 +25,9 @@ function init() {
   let score = 0
   // let highScore = localStorage.getItem('highScore')
   // 'username,3,username2,4' //
-  const leaderBoard = window.localStorage.getItem('leaderboard')
+  let leaderboardStorage = window.localStorage.getItem('leaderboard')
+  const leaderboard = []
+
   let lives
   startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
@@ -48,7 +52,7 @@ function init() {
   const frightenedClass = 'frightened'
   const livesClass = 'lives'
 
-  //leaderBoard
+  //leaderboard
   //create variables for leaderboard
  
   //character movement variables
@@ -176,9 +180,13 @@ function init() {
       cell ? grid.removeChild(cell) : null
     }
     cells.splice(0) // empty cells array
+    const previousScores = document.querySelectorAll('.leader')
+    console.log(previousScores)
+    previousScores.forEach(leader => leaderboardDisplay.removeChild(leader))
   }
 
   const loadLevel = () => {
+    console.log(leaderboard)
     resetGame()
     //set variables
     width = boards[level].width
@@ -191,12 +199,20 @@ function init() {
     ghostsStartingPosition = boards[level].ghosts
     releaseGhostCount = 1
     lives = 5
-    highScore = localStorage.getItem('highScore')
+    // highScore = localStorage.getItem('highScore')
+    // leaderboardStorage = window.localStorage.getItem('leaderboard')
     pacManCurrentPosition = pacManStartingPosition
+
 
     //set display
     scoreDisplay.innerText = score
-    highScoreDisplay.innerText = highScore
+    leaderboard.forEach((item, index) => {
+      const score = document.createElement('p')
+      score.classList.add('leader')
+      score.innerText = `${index + 1} ${item[0]} ${item[1]}`
+      leaderboardDisplay.appendChild(score)
+    })
+    // highScoreDisplay.innerText = highScore
     for (let i = 1; i <= lives; i++) { //create lives display
       const life = document.createElement('div')
       life.classList.add(livesClass)
@@ -401,90 +417,45 @@ function init() {
     btncontainer.removeChild(startBtn)// remove start button
   }
 
-  // check leaderboard
-  // const updateLeaderBoard = (username, score) => {
-  //   // for (let i = 0; i < leaderBoard.length; i++) {
-  //   //   //target score
-  //   //   if (leaderBoard[i]) {
-  //   //     const leaderScore = parseInt(leaderBoard[i].split(' ')[1])
-  //   //     if (score > leaderScore) {
-  //   //       localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
-  //   //       return
-  //   //     }
-  //   //   } else {
-  //   //     localStorage.setItem(`leaderBoard${i}`, `${username} ${score}`)
-  //   //   }
-
-  //   //   //check if greater than
-  //   //   // score > leader
-  //   //   //if yes then update storage
-  //   //   //
-  //   // }
-
-  //   //create an array that holds top five scores in order
-  //   const top5Array = leaderBoard.map(item => {
-  //     if (item && !isNaN(item[1])) {
-  //       const stringArr = item.split(' ')
-  //       const valuePairs = []
-  //       valuePairs.push(stringArr[0])
-  //       valuePairs.push(parseInt(stringArr[1]))
-  //       return valuePairs
-  //     } else {
-  //       return [' ', 0]
-  //     }
-  //   })
-  //   const orderedTop5 = top5Array.sort((a, b) => b[1] - a[1])
-  //   console.log(orderedTop5)
-  //   // if score above bottom score // pop and push
-  //   if (score > orderedTop5[4][1] || isNaN(orderedTop5[4][1])) {
-  //     orderedTop5.pop()
-  //     const newArr = [username, score]
-  //     orderedTop5.push(newArr)
-  //   }
-  //   // put scores in order
-  //   const newOrderedTop5 = orderedTop5.sort((a, b) => b[1] - a[1])
-  //   // update local storage
-  //   newOrderedTop5.forEach((item, index) => {
-  //     window.localStorage.setItem(`leaderBoard${index}`, `${item[0]} ${item[1]}`)
-  //   })
-  //   // leaderBoard = [localStorage.getItem('leaderBoard0'), localStorage.getItem('leaderBoard1'), localStorage.getItem('leaderBoard2'), localStorage.getItem('leaderBoard3'), localStorage.getItem('leaderBoard4')]
-  //   console.log(newOrderedTop5)
-
-  //   // push other scores down one
-  //   //update display
-  // }
- 
   const updateLeaderBoard = (username, score) => {
-    const top5 = leaderBoard.split(',')
-    const pairedTop5 = []
-    //make array of key value pairedTop5
-    top5.forEach((item, index) => {
-      const pair = []
-      if (index % 2 === 0) {
-        pair.push(item, parseInt(top5[index + 1]))
-        pairedTop5.push(pair)
-      }
-    })
-    console.log(pairedTop5)
-    pairedTop5.sort((a, b) => b[1] - a[1])
-    //order array
-    if (pairedTop5[4]) {
-      if (score > pairedTop5[4][1]) {
-        pairedTop5.pop()
-        pairedTop5.push([username, score])
-        pairedTop5.sort((a, b) => b[1] - a[1])
-        window.localStorage.setItem('leaderboard', pairedTop5)
+    leaderboard.splice(0)
+    leaderboardStorage = window.localStorage.getItem('leaderboard')
+    console.log(leaderboardStorage !== null)
+    if (leaderboardStorage) {
+      const top5 = leaderboardStorage.split(',')// check if local storage exists
+      //make array of key value leaderboard
+      top5.forEach((item, index) => {
+        const pair = []
+        if (index % 2 === 0) {
+          pair.push(item, parseInt(top5[index + 1]))
+          leaderboard.push(pair)
+        }
+      })
+      // console.log(leaderboard)
+      leaderboard.sort((a, b) => b[1] - a[1])
+      //order array
+      if (leaderboard[4]) {
+        if (score > leaderboard[4][1]) {
+          leaderboard.pop()
+          leaderboard.push([username, score])
+          leaderboard.sort((a, b) => b[1] - a[1])
+          window.localStorage.setItem('leaderboard', leaderboard)
+        }
+      } else {
+        leaderboard.push([username, score])
+        leaderboard.sort((a, b) => b[1] - a[1])
+        window.localStorage.setItem('leaderboard', leaderboard)
       }
     } else {
-      pairedTop5.push([username, score])
-      pairedTop5.sort((a, b) => b[1] - a[1])
-      window.localStorage.setItem('leaderboard', pairedTop5)
+      window.localStorage.setItem('leaderboard', 'player,0')
+      leaderboard.push(['player', 0])
     }
-    console.log(pairedTop5)
+    
+    console.log(leaderboard)
     // add this score to array
     // load to local storage
   }
-  updateLeaderBoard()
+
   const endGame = (result) => {
     result === 'win' ? window.alert(`you win. Your Score is ${score}`) : window.alert(`Try Again. Your Score is ${score}`) 
     updateLeaderBoard(userName, score)
@@ -514,13 +485,16 @@ function init() {
     difficulty = difficultyInput
     scoreContainer.style.display = 'flex'
     btncontainer.style.display = 'flex'
+    middleContainer.style.display = 'flex'
     form.style.display = 'none'
+    updateLeaderBoard(userName, 0)
     loadLevel()
   } 
   // create starting plate
   const startScreen = () => {
     scoreContainer.style.display = 'none'
     btncontainer.style.display = 'none'
+    middleContainer.style.display = 'none'
   }
   startScreen()
   
@@ -575,6 +549,7 @@ function init() {
     nextLevelbtn.addEventListener('click', skipLevel)
   }
   // window.localStorage.clear()
+  console.log(leaderboardStorage)
 
   editing()
   //eventlisteners
