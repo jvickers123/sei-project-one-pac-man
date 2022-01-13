@@ -12,6 +12,7 @@ function init() {
   const form = document.querySelector('form')
   const endScreen = document.querySelector('#end-screen')
   const submitBtn = document.querySelector('#submit')
+  const muteBtn = document.querySelector('#mute')
 
   //audio
   const mainAudio = new Audio('sounds/main-tune.mp3')
@@ -29,6 +30,7 @@ function init() {
   loseLifeAudio.volume = 0.3
   loseGameAudio.volume = 0.1
   winGameAudio.volume = 0.2
+  let muted = false
 
   //variables
   let width
@@ -40,7 +42,6 @@ function init() {
   // 'username,3,username2,4' //
   let leaderboardStorage = window.localStorage.getItem('leaderboard')
   const leaderboard = []
-
   let lives
   startBtn.innerHTML = 'Start!'
   const boards = [] //array of different boards
@@ -53,7 +54,6 @@ function init() {
   let releaseGhostsInterval
   let releaseGhostCount//give global scope so it can be reset in endgame
   let removeFrightenedTimer
-
   
   //classes
   const wallClass = 'wall'
@@ -67,7 +67,7 @@ function init() {
 
   //leaderboard
   //create variables for leaderboard
- 
+
   //character movement variables
   let wallsStartingPosition//[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 31, 40, 43, 45, 46, 48, 49, 50, 52, 54, 55, 56, 58, 59, 61, 64, 82, 85, 87, 88, 90, 92, 93, 94, 95, 96, 98, 100, 101, 103, 106, 111, 115, 119, 124, 127, 128, 129, 130, 132, 133, 134, 136, 138, 139, 140, 142, 143, 144, 145, 151, 153, 161, 163, 168, 169, 170, 171, 172, 174, 176, 177, 178, 179, 180, 182, 184, 185, 186, 187, 188, 197, 201, 210, 211, 212, 213, 214, 216, 218, 219, 220, 221, 222, 224, 226, 227, 228, 229, 230, 235, 237, 245, 247, 253, 254, 255, 256, 258, 260, 261, 262, 263, 264, 266, 268, 269, 270, 271, 274, 283, 292, 295, 297, 298, 300, 301, 302, 304, 306, 307, 308, 310, 311, 313, 316, 319, 331, 334, 337, 338, 340, 342, 344, 345, 346, 347, 348, 350, 352, 354, 355, 358, 363, 367, 371, 376, 379, 381, 382, 383, 384, 385, 386, 388, 390, 391, 392, 393, 394, 395, 397, 400, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439]
   let gate // 178
@@ -164,14 +164,14 @@ function init() {
   }
 
   const frightenedGhosts = () => {
-    bigFoodAudio.play()
+    !muted ? bigFoodAudio.play() : null
     let alreadyFrightened = false
     chasePacMan = false
     cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
     alreadyFrightened ? clearTimeout(removeFrightenedTimer) : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
     const removeFrightenedClass = () => {
-      bigFoodEndAudio.play()
+      playing && !muted ? bigFoodEndAudio.play() : null
       ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
       chasePacMan = true // move back to ghosts chasing pacman
     }
@@ -261,14 +261,14 @@ function init() {
   const collision = (cell, checkClass, frightened) => {
     if (cell.classList.contains(checkClass)) {
       if (frightened) {
-        eatghostAudio.play()
+        !muted ? eatghostAudio.play() : null
         score += 250
         const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
         removeGhosts(parseInt(cell.id), index)
         ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
         addGhost(ghostsCurrentPositon[index], index, true)
       } else {
-        loseLifeAudio.play()
+        !muted ? loseLifeAudio.play() : null
         lives--
         removePacMan(pacManCurrentPosition)
         pacManCurrentPosition = pacManStartingPosition
@@ -322,7 +322,7 @@ function init() {
       const currentCell = cells[pacManCurrentPosition]
       // if current position has food class
       if (currentCell.classList.contains(foodClass)) {
-        eatingAudio.play()
+        ! muted ? eatingAudio.play() : null
         currentCell.classList.remove(foodClass)
         score += (20 * difficulty)
         scoreDisplay.innerText = score
@@ -422,7 +422,7 @@ function init() {
   const playGame = () => {
     playing = true
     mainAudio.loop = true
-    mainAudio.play()
+    !muted ? mainAudio.play() : null
     moveGhostInterval = setInterval(moveGhosts, 100 * (10 - difficulty)) // start moving ghosts
     releaseGhostsInterval = setInterval(releaseGhosts, 1000 * 7) // release ghosts every 7 seconds
     btncontainer.removeChild(startBtn)// remove start button
@@ -471,7 +471,9 @@ function init() {
     clearInterval(moveGhostInterval)
     clearInterval(releaseGhostsInterval)
     mainAudio.pause()
-    result === ('win') ? winGameAudio.play() : loseGameAudio.play()
+    if (!muted) {
+      result === ('win') ? winGameAudio.play() : loseGameAudio.play()
+    }
     // update leaderboard
     updateLeaderBoard(userName, score)
     // minimise middle container scores and buttons
@@ -532,6 +534,17 @@ function init() {
     middleContainer.appendChild(leaderboardDisplay)
   }
 
+  const toggleMute = () => {
+    if (muted) {
+      playing ? mainAudio.play() : null
+      muted = false
+      muteBtn.style.textDecoration = 'none'
+    } else {
+      mainAudio.pause()
+      muted = true
+      muteBtn.style.textDecoration = 'line-through'
+    }
+  }
   startScreen()
 
  
@@ -578,6 +591,7 @@ function init() {
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
   submitBtn.addEventListener('click', handleStartGame)
+  muteBtn.addEventListener('click', toggleMute)
 }
 
 window.addEventListener('DOMContentLoaded', init)

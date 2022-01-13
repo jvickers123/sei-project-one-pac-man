@@ -114,3 +114,7 @@ h1 {
 #end-screen {
   flex-direction: column;
 }
+
+#mute {
+  text-decoration: line-through;
+}
