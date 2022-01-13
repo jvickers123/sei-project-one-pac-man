@@ -1,11 +1,11 @@
 function init() {
   //elements
   const grid = document.querySelector('#grid')
-  const scoreDisplay = document.querySelector('#score')
+  const scoreDisplay = document.querySelector('.score')
   const livesDisplay = document.querySelector('#lives-container')
   const startBtn = document.querySelector('#start-game')
   const btncontainer = document.querySelector('#buttons-container')
-  const userNameDisplay = document.querySelector('#username')
+  const userNameDisplay = document.querySelector('.username')
   const leaderboardDisplay = document.querySelector('#leaderboard')
   const scoreContainer = document.querySelector('#scores-container')
   const middleContainer = document.querySelector('#middle-container')
@@ -195,9 +195,18 @@ function init() {
       cell ? grid.removeChild(cell) : null
     }
     cells.splice(0) // empty cells array
+    
+  }
+
+  const loadLeaderboard = () => {
     const previousScores = document.querySelectorAll('.leader')
-    console.log(previousScores)
     previousScores.forEach(leader => leaderboardDisplay.removeChild(leader))
+    leaderboard.forEach((item, index) => {
+      const score = document.createElement('p')
+      score.classList.add('leader')
+      score.innerHTML = `${index + 1} <span class="leaderboard-username">${item[0]}</span> ${item[1]}`
+      leaderboardDisplay.appendChild(score)
+    })
   }
 
   const loadLevel = () => {
@@ -217,12 +226,7 @@ function init() {
 
     //set display
     scoreDisplay.innerText = score
-    leaderboard.forEach((item, index) => {
-      const score = document.createElement('p')
-      score.classList.add('leader')
-      score.innerHTML = `${index + 1} <span class="leaderboard-username">${item[0]}</span> ${item[1]}`
-      leaderboardDisplay.appendChild(score)
-    })
+    loadLeaderboard()
     for (let i = 1; i <= lives; i++) { //create lives display
       const life = document.createElement('div')
       life.classList.add(livesClass)
@@ -481,11 +485,13 @@ function init() {
     scoreContainer.style.display = 'none'
     btncontainer.style.display = 'none'
     middleContainer.style.display = 'none'
+    title.style.display = 'none'
     // create div
     const text = document.createElement('p')
-    result === 'win' ? text.innerHTML = `<span id="congratulations">Congratulations ${userName}!</span> </br> You cleared all the boards! </br> Your Score: ${score}` : text.innerHTML = `<span id="unlucky">Unlucky ${userName}! </br> You cleared ${level} boards </br> Your Score: ${score}`
+    result === 'win' ? text.innerHTML = `<h3>Congratulations <span class="username">${userName}</span>!</h3>You cleared all the boards! </br> Your Score: <span class="score">${score}</span></p>` : text.innerHTML = `<h3>Unlucky <span class="username">${userName}</span>! </h3> You cleared ${level} boards </br> Your Score: <span class="score">${score}</span></p>`
     endScreen.appendChild(text)
     // add leaderboard
+    loadLeaderboard()
     endScreen.appendChild(leaderboardDisplay)
     // add button
     const button = document.createElement('button')
@@ -589,7 +595,7 @@ function init() {
   }
   // window.localStorage.clear()
 
-  // editing()
+  editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
