@@ -131,6 +131,8 @@ form, #end-screen {
 
 form {
   padding: 0.3rem 1rem;
+  width: 40rem;
+  height: 22rem;
 }
 
 
@@ -198,7 +200,7 @@ p {
 .form-container {
   display: flex;
   margin-bottom: 0.5rem;
-  align-items: center;
+  width: 35rem;
 }
 
 label {
@@ -207,8 +209,10 @@ label {
 }
 
 #slider, #user-name-text {
-  width: 15rem;
+  /* /* width: 15rem; */
+  width: 0;
   line-height: 1.5rem;
+  transition: width 2s;
 }
 
 #user-name-text {
@@ -248,6 +252,7 @@ label {
   box-shadow: 0 0 0;
   font-size: 2rem;
   color: white;
+  text-shadow: none;
 }
 .leaderboard-username, #score, .username, .score {
   color: white;

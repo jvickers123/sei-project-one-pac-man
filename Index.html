@@ -18,13 +18,13 @@
       <button id="mute"><i class="fas fa-volume-mute"></i></button>
     </div>
     <form id="starting-plate" method="POST" action="">
-      <h2>Welcome to Pac Man!</h2>
+      <h2 id="welcome-text">Welcome to Pac Man!</h2>
       <div class="form-container" id="username-form-container">
-        <label for="user-name">Enter Username: </label>
+        <label for="user-name" id="enter-username-label">Enter Username: </label>
         <input type="text" id="user-name-text" name="user-name">
       </div>
       <div class="form-container" id="difficulty-container">
-        <label for="slider">Select Difficulty: </label>
+        <label for="slider" id="difficulty-label">Select Difficulty: </label>
         <input type="range" name="slider" min="1" max="9" value="5" id="slider">
       </div>
       <button id="submit">Start Game!</button>

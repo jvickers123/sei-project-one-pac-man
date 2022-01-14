@@ -14,8 +14,11 @@ function init() {
   const submitBtn = document.querySelector('#submit')
   const muteBtn = document.querySelector('#mute')
   const title = document.querySelector('h1')
-  const instructions = document.querySelector('#instructions-text')
-  console.log(instructions.innerText.length)
+  const welcomeText = document.querySelector('#welcome-text')
+  const enterUsernameText = document.querySelector('#enter-username-label')
+  const enterUsernameBox = document.querySelector('#user-name-text')
+  const difficultyText = document.querySelector('#difficulty-label')
+  const slider = document.querySelector('#slider')
 
   //audio
   const mainAudio = new Audio('sounds/main-tune.mp3')
@@ -41,8 +44,6 @@ function init() {
   let cellCount
   const cells = []
   let score = 0
-  // let highScore = localStorage.getItem('highScore')
-  // 'username,3,username2,4' //
   let leaderboardStorage = window.localStorage.getItem('leaderboard')
   const leaderboard = []
   let lives
@@ -53,6 +54,8 @@ function init() {
   let userName 
   let endScreenText
   let startAgainBtn
+  const TextToAnimate = [welcomeText, enterUsernameText, enterUsernameBox, difficultyText, slider, submitBtn, '', title, '']
+  let animateIndex
 
   //timerouts and intervals
   let moveGhostInterval //give intervals global scope so can be stopped after end game
@@ -110,8 +113,9 @@ function init() {
   board1.pushBoard()
   const board2 = new Board(31, 23, [14, 16, 35, 36, 37, 38, 39, 40, 41, 42, 45, 47, 50, 51, 52, 53, 54, 55, 56, 57, 63, 64, 65, 66, 73, 74, 75, 76, 78, 79, 80, 81, 88, 89, 90, 91, 94, 99, 100, 102, 114, 116, 117, 122, 125, 127, 128, 133, 135, 136, 137, 138, 139, 140, 141, 142, 143, 145, 150, 151, 153, 156, 158, 159, 162, 163, 164, 170, 176, 177, 178, 181, 182, 184, 187, 195, 197, 199, 201, 203, 205, 207, 215, 218, 219, 220, 221, 223, 224, 228, 230, 232, 234, 236, 240, 241, 243, 244, 245, 246, 252, 261, 265, 274, 279, 280, 281, 282, 283, 285, 286, 288, 289, 291, 292, 293, 294, 295, 296, 297, 299, 300, 302, 303, 305, 306, 307, 308, 309, 316, 320, 322, 328, 330, 334, 341, 342, 343, 344, 345, 347, 348, 350, 351, 353, 354, 355, 356, 357, 358, 359, 361, 362, 364, 365, 367, 368, 369, 370, 371, 376, 379, 381, 393, 395, 398, 404, 405, 406, 407, 414, 415, 416, 417, 418, 419, 420, 421, 422, 429, 430, 431, 432, 435, 437, 440, 441, 442, 443, 453, 455, 456, 457, 458, 461, 463, 466, 468, 470, 471, 472, 476, 478, 479, 480, 482, 489, 490, 492, 494, 497, 505, 507, 509, 511, 513, 514, 516, 517, 525, 528, 529, 530, 531, 533, 534, 536, 538, 540, 545, 547, 550, 551, 553, 555, 556, 559, 561, 562, 564, 565, 567, 568, 569, 571, 572, 573, 574, 575, 576, 578, 579, 581, 582, 584, 585, 587, 590, 610, 618, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 636, 637, 638, 639, 643, 644, 645, 646, 647, 648, 649, 665, 667, 670, 671, 672, 673, 674, 696, 698], 356, [460, 438, 146, 132], 263, [387, 323, 324, 325, 326, 327 ]  )
   board2.pushBoard()
-  const blankBoard = new Board(21, 23, [], 0, [], 0, [])
-  blankBoard.pushBoard()
+  //blank board for editing
+  // const blankBoard = new Board(21, 23, [], 0, [], 0, [])
+  // blankBoard.pushBoard()
   
   //functions
 
@@ -526,7 +530,50 @@ function init() {
     form.style.display = 'none'
     updateLeaderBoard(userName, 0)
     loadLevel()
+    animateIndex++
+    typeWriterAnimation(TextToAnimate[animateIndex])
   } 
+  //functtion to animate text
+  const typeWriterAnimation = (textToAnimate) => {
+    if (textToAnimate === '') {//return function once hit a break in the array
+      return
+    }
+    textToAnimate.style.display = 'inline'
+    if (textToAnimate.innerText) { // check if item contains text
+      const textArray = textToAnimate.innerText.split('')
+      textToAnimate.innerHTML = ''
+      const i = 0
+      const pushLetters = (i) => {
+        if (i < textArray.length) {//push letters one by one
+          textToAnimate.innerHTML += textArray[i]
+          const increaseIndex = () => {
+            i++
+            pushLetters(i)
+          } 
+          setTimeout(increaseIndex, 100)
+        } 
+        if (i === textArray.length) {
+          animateIndex++
+          typeWriterAnimation(TextToAnimate[animateIndex])//run function with next item at end
+        }
+      }
+      pushLetters(i)
+    } else {
+      if (animateIndex < TextToAnimate.length) { // if not a text item expand width
+        textToAnimate.style.display = 'inline-block'
+        if (textToAnimate.getAttribute('type') === 'text' || textToAnimate.getAttribute('type') === 'range') {
+          textToAnimate.style.width = '15rem'
+        }
+        animateIndex++
+        typeWriterAnimation(TextToAnimate[animateIndex])
+      }
+        
+    }
+    
+  }
+
+
+
   const startScreen = () => {
     scoreContainer.style.display = 'none'
     btncontainer.style.display = 'none'
@@ -537,6 +584,16 @@ function init() {
     middleContainer.appendChild(leaderboardDisplay)
     endScreenText ? endScreen.removeChild(endScreenText) : null
     startAgainBtn ? endScreen.removeChild(startAgainBtn) : null
+
+    //animation
+    enterUsernameText.style.display = 'none'
+    // enterUsernameBox.style.width = 0
+    enterUsernameBox.style.display = 'none'
+    difficultyText.style.display = 'none'
+    slider.style.display = 'none'
+    submitBtn.style.display = 'none'
+    animateIndex = 0
+    typeWriterAnimation(TextToAnimate[animateIndex])
   }
 
   const toggleMute = () => {
@@ -552,8 +609,7 @@ function init() {
   }
   startScreen()
 
- 
-
+  //function for editing and adding boards
   const editing = () => {
     // function to toggle wall class on cell that is clicked
     function addWalls(e) {
@@ -574,10 +630,9 @@ function init() {
 
     //function to print walls to console.log
     const printWalls = () => {
-      const addRow = boards[level].walls.map(position => position + width)
       for (let i = 0; i < boards[level].walls.length; i += 100)  { // in chunks so can be easily copy and pasted
         // console.log('original', boards[level].walls.slice(i))
-        console.log('new', addRow.slice(i))
+        console.log('new', boards[level].slice(i))
       }
 
     }
@@ -594,7 +649,7 @@ function init() {
   }
   // window.localStorage.clear()
 
-  editing()
+  // editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
