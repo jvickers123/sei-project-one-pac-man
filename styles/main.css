@@ -28,7 +28,7 @@ button {
 #grid {
   display: grid;
   background: black;
-  padding: 1.25rem 0;
+  /* padding: 1.25rem 0; */
   /* margin: 0 auto; */
 }
 
@@ -156,8 +156,7 @@ form {
 }
 
 #end-screen #leaderboard p {
-  border-bottom: 1px solid;
-  color: #ffee00;
+  border-bottom: 1px solid #ffee00;
 }
 form > * {
   margin: 2rem 0;
