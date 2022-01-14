@@ -32,7 +32,7 @@ button {
   /* margin: 0 auto; */
 }
 
-#middle-container > *, button, form, #slider::-webkit-slider-thumb, #slider, #user-name-text, #end-screen, #end-screen #leaderboard {
+#middle-container > *, button, form, #slider::-webkit-slider-thumb, #slider, #user-name-text, #end-screen {
   border: 0.2rem solid blue;
   box-shadow: 0 0 1.5rem blue;
 }
@@ -140,7 +140,6 @@ form {
 }
 
 #end-screen #leaderboard {
-  border: 1px solid blue;
   font-size: 0.7rem;
   padding: 0 1rem 1rem 1rem;
   width: 30rem;
@@ -154,6 +153,11 @@ form {
 #end-screen #leaderboard h3 {
   grid-column: 1 / span 2;
   justify-self: center;
+}
+
+#end-screen #leaderboard p {
+  border-bottom: 1px solid;
+  color: #ffee00;
 }
 form > * {
   margin: 2rem 0;

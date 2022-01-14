@@ -49,6 +49,8 @@ function init() {
   let level = 0
   let difficulty = 4
   let userName 
+  let endScreenText
+  let startAgainBtn
 
   //timerouts and intervals
   let moveGhostInterval //give intervals global scope so can be stopped after end game
@@ -176,7 +178,6 @@ function init() {
       chasePacMan = true // move back to ghosts chasing pacman
       frightenedGhosts = false
     }
-    console.log('already frightened', frightenedGhosts)
     removeFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
 
@@ -486,23 +487,23 @@ function init() {
     middleContainer.style.display = 'none'
     title.style.display = 'none'
     // create div
-    const text = document.createElement('p')
-    result === 'win' ? text.innerHTML = `<h3>Congratulations <span class="username">${userName}</span>!</h3>You cleared all the boards! </br> Your Score: <span class="score">${score}</span></p>` : text.innerHTML = `<h3>Unlucky <span class="username">${userName}</span>! </h3> You cleared ${level} boards </br> Your Score: <span class="score">${score}</span></p>`
-    endScreen.appendChild(text)
+    endScreenText = document.createElement('p')
+    result === 'win' ? endScreenText.innerHTML = `<h3>Congratulations <span class="username">${userName}</span>!</h3>You cleared all the boards! </br> Your Score: <span class="score">${score}</span></p>` : endScreenText.innerHTML = `<h3>Unlucky <span class="username">${userName}</span>! </h3> You cleared ${level} boards </br> Your Score: <span class="score">${score}</span></p>`
+    endScreen.appendChild(endScreenText)
     // add leaderboard
     loadLeaderboard()
     endScreen.appendChild(leaderboardDisplay)
     // add button
-    const button = document.createElement('button')
-    result === 'win' ? button.innerText = 'Start Again!' : button.innerText = 'Try Again!' 
-    endScreen.appendChild(button)
+    startAgainBtn = document.createElement('button')
+    result === 'win' ? startAgainBtn.innerText = 'Start Again!' : startAgainBtn.innerText = 'Try Again!' 
+    endScreen.appendChild(startAgainBtn)
     endScreen.style.display = 'flex'
     console.log(endScreen.style.display)
     //reset game
     level = 0
     score = 0
-    //button sends back to start
-    button.addEventListener('click', startScreen)
+    //startAgainBtn sends back to start
+    startAgainBtn.addEventListener('click', startScreen)
   }
   
   const endLevel = (result) => {
@@ -522,7 +523,7 @@ function init() {
     e.preventDefault()
     const userNameInput = document.querySelector('#user-name-text').value.replace(/\s/g, '') // get username
     const difficultyInput = document.querySelector('#slider').value
-    userName = userNameInput
+    userNameInput.length < 8 ? userName = userNameInput : userName = userNameInput.slice(0, 7)
     difficulty = difficultyInput
     scoreContainer.style.display = 'flex'
     btncontainer.style.display = 'flex'
@@ -540,6 +541,8 @@ function init() {
     title.style.display = 'none'
     form.style.display = 'flex'
     middleContainer.appendChild(leaderboardDisplay)
+    endScreenText ? endScreen.removeChild(endScreenText) : null
+    startAgainBtn ? endScreen.removeChild(startAgainBtn) : null
   }
 
   const toggleMute = () => {
@@ -600,13 +603,12 @@ function init() {
   startBtn.addEventListener('click', playGame)
   submitBtn.addEventListener('click', handleStartGame)
   muteBtn.addEventListener('click', toggleMute)
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
 
 
-// fix frightened ghost class
-// restrict username
 // change styling on end screen
 // fix boards
 // animation
