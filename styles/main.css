@@ -8,7 +8,7 @@ body {
   align-items: center;
   color: #ffee00;
   background: black;
-  text-shadow: 0 0 2px #ffee00;
+  /* text-shadow: 0 0 2px #ffee00; */
   font-family: 'Press Start 2P', cursive;
   font-weight: lighter;
   line-height: 1.5rem;
@@ -23,6 +23,7 @@ body {
 
 button {
   padding: 0.2rem 1rem;
+  text-shadow: -2px 2px #fc4903;
 }
 
 #grid {
@@ -165,11 +166,15 @@ form > * {
 h1 {
   font-size: 2rem;
   font-weight: lighter;
-  text-shadow: 0 0 10px #ffee00;
+  text-shadow: -3px 3px #fc4903;
+}
+h2 {
+  text-shadow: -2.5px 2.5px #fc4903;
 }
 
 h3 {
   font-size: 1rem;
+  text-shadow: -2px 2px #fc4903;
 }
 
 p {

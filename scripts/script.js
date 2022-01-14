@@ -14,6 +14,8 @@ function init() {
   const submitBtn = document.querySelector('#submit')
   const muteBtn = document.querySelector('#mute')
   const title = document.querySelector('h1')
+  const instructions = document.querySelector('#instructions-text')
+  console.log(instructions.innerText.length)
 
   //audio
   const mainAudio = new Audio('sounds/main-tune.mp3')
@@ -481,7 +483,7 @@ function init() {
     title.style.display = 'none'
     // create div
     endScreenText = document.createElement('p')
-    result === 'win' ? endScreenText.innerHTML = `<h3>Congratulations <span class="username">${userName}</span>!</h3>You cleared all the boards! </br> Your Score: <span class="score">${score}</span></p>` : endScreenText.innerHTML = `<h3>Unlucky <span class="username">${userName}</span>! </h3> You cleared ${level} boards </br> Your Score: <span class="score">${score}</span></p>`
+    result === 'win' ? endScreenText.innerHTML = `<h2>Congratulations <span class="username">${userName}</span>!</h2>You cleared all the boards! </br> Your Score: <span class="score">${score}</span></p>` : endScreenText.innerHTML = `<h2>Unlucky <span class="username">${userName}</span>! </h2> You cleared ${level} boards </br> Your Score: <span class="score">${score}</span></p>`
     endScreen.appendChild(endScreenText)
     // add leaderboard
     loadLeaderboard()
@@ -604,5 +606,4 @@ function init() {
 window.addEventListener('DOMContentLoaded', init)
 
 
-// fix boards
 // animation
