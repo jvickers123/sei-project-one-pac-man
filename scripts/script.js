@@ -649,7 +649,7 @@ function init() {
   }
   // window.localStorage.clear()
 
-  editing()
+  // editing()
   //eventlisteners
   document.addEventListener('keydown', movePacMan)
   startBtn.addEventListener('click', playGame)
