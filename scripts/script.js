@@ -80,6 +80,7 @@ function init() {
   const ghostDirection = []
   let playing = false
   let chasePacMan = true
+  let frightenedGhosts = false
 
 
   // new Board Class
@@ -134,7 +135,7 @@ function init() {
     foodArray.forEach(cell => cell.classList.add(foodClass))
   }
 
-  const addGhost = (position, index, frightened) => {
+  const addGhost = (position, index) => {
     let colour
     if (index % 4 === 0) {
       colour = 'red'
@@ -146,7 +147,7 @@ function init() {
       colour = 'orange'
     }
     cells[position].classList.add(ghostClass, colour)
-    frightened ? cells[position].classList.add(frightenedClass) : null
+    frightenedGhosts ? cells[position].classList.add(frightenedClass) : null
   }
 
   const removeGhosts = (position, index) => {
@@ -164,19 +165,18 @@ function init() {
     cells[position].classList.remove(ghostClass, colour, frightenedClass)
   }
 
-  const frightenedGhosts = () => {
+  const frightenGhosts = () => {
     !muted ? bigFoodAudio.play() : null
-    let alreadyFrightened = false
     chasePacMan = false
-    cells.some(cell => cell.classList.contains('frightened')) ? alreadyFrightened = true : null
-    alreadyFrightened ? clearTimeout(removeFrightenedTimer) : null
+    frightenedGhosts ? clearTimeout(removeFrightenedTimer) : null
     ghostsCurrentPositon.forEach(position => cells[position].classList.add(frightenedClass))// add frightened class to ghosts
     const removeFrightenedClass = () => {
       playing && !muted ? bigFoodEndAudio.play() : null
       ghostsCurrentPositon.forEach(position => cells[position].classList.remove(frightenedClass))
       chasePacMan = true // move back to ghosts chasing pacman
+      frightenedGhosts = false
     }
-    console.log('already frightened', alreadyFrightened)
+    console.log('already frightened', frightenedGhosts)
     removeFrightenedTimer = setTimeout(removeFrightenedClass, 1000 * 5)
   }
 
@@ -263,15 +263,15 @@ function init() {
     ghostsStartingPosition.forEach(position => ghostsCurrentPositon.push(position))// let current position = starting position
   }
 
-  const collision = (cell, checkClass, frightened) => {
+  const collision = (cell, checkClass ) => {
     if (cell.classList.contains(checkClass)) {
-      if (frightened) {
+      if (frightenedGhosts) {
         !muted ? eatghostAudio.play() : null
         score += 250
         const index = ghostsCurrentPositon.indexOf(parseInt(cell.id))
         removeGhosts(parseInt(cell.id), index)
         ghostsCurrentPositon[index] = ghostsStartingPosition[0]// send to start
-        addGhost(ghostsCurrentPositon[index], index, true)
+        addGhost(ghostsCurrentPositon[index], index)
       } else {
         !muted ? loseLifeAudio.play() : null
         lives--
@@ -334,7 +334,7 @@ function init() {
       }
       // bigFood chek
       if (currentCell.classList.contains(bigFoodClass)) {
-        frightenedGhosts()
+        frightenGhosts()
         currentCell.classList.remove(bigFoodClass)
       }
       // if current position has ghost class
@@ -348,9 +348,8 @@ function init() {
   
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
+    cells.some(cell => cell.classList.contains(frightenedClass)) ? frightenedGhosts = true : frightenedGhosts = false //check if frightened class is on cell
     ghostsCurrentPositon.forEach((position, index) => {
-      let frightened
-      cells[position].classList.contains(frightenedClass) ? frightened = true : frightened = false //check if frightened class is on cell
       removeGhosts(position, index) //: removeGhosts(position)
       const pickDirection = (direction) => {
         if (direction === null) {
@@ -403,8 +402,8 @@ function init() {
       }
       movingGhost(ghostDirection[index])
       // cells[position].style.transform = 'rotate(0)'
-      frightened ? addGhost(ghostsCurrentPositon[index], index, true) : addGhost(ghostsCurrentPositon[index], index, false)
-      collision(cells[position], pacManClass, frightened)
+      addGhost(ghostsCurrentPositon[index], index)
+      collision(cells[position], pacManClass)
     })
   }
 
@@ -604,3 +603,10 @@ function init() {
 }
 
 window.addEventListener('DOMContentLoaded', init)
+
+
+// fix frightened ghost class
+// restrict username
+// change styling on end screen
+// fix boards
+// animation
