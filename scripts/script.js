@@ -352,6 +352,7 @@ function init() {
     }
   }
   
+
   const  moveGhosts = () =>{
     const directionOptions = ['up', 'down', 'left', 'right']
     cells.some(cell => cell.classList.contains(frightenedClass)) ? frightenedGhosts = true : frightenedGhosts = false //check if frightened class is on cell
@@ -454,7 +455,7 @@ function init() {
       leaderboard.sort((a, b) => b[1] - a[1])
       //order array
       if (leaderboard[9]) {
-        if (score > leaderboard[4][1]) {
+        if (score > leaderboard[9][1]) {
           leaderboard.pop()
           leaderboard.push([username, score])
           leaderboard.sort((a, b) => b[1] - a[1])
