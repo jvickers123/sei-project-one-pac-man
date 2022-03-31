@@ -9,7 +9,7 @@ My first ever dev project. It was done 3 weeks into the General Assembly Softwar
  
 ## Brief
  
-To create a fully functioning browser based game of your choice using vanilla JavaScript in 9 days.
+To create a fully functioning browser based game of your choice using JavaScript in 9 days.
  
  
  
@@ -37,10 +37,10 @@ JavaScript, CSS, HTML
 > * Each cell can either have a class of wall or corridor decided.
 > * Corridor class cells can either have class of food or non food.
 > * When a new board is done, it can be brought by a new array.
-> *  Can create board, then make a function that saves board by pushing each cells  classList into an array.
+> *  Can create a board, then make a function that saves the board by pushing each cell’s classList into an array.
  
 > *The characters:*
-> * Pac Man is controlled like in Sam’s lesson .
+> * Pac Man is controlled like in the General Assembly lesson .
 > * But an extra conditional based on whether the next square is a wall or a corridor.
 > * A function to remove food class when Pac Man is in a square with food.
 > * Add to score.
@@ -55,7 +55,7 @@ JavaScript, CSS, HTML
 > * When flashy food is eaten this function runs.
 > * Turns ghosts blue  (add blue class).
 > * Ghosts movement is now more random and possibly moves away from Pac Man's current position.
-> * If Pac Man is in same square as ghost, ghost disappears.
+> * If Pac Man is in the same square as a ghost, the ghost disappears.
  
 > *End Game / new board function*
 > * If Ghost is in the same square as Pac Man then game over.
@@ -68,7 +68,7 @@ I also created a basic wire-frame for what the MVP should look like:
  
 ![wire-frame-one](./wireframe/Screenshot%202022-01-07%20at%2010.30.20.png)
  
-I then pseudocoded in detail each function, variable and event listener that would be needed to achieve the MVP.
+I then wrote pseudocode in detail for each function, variable and event listener that would be needed to achieve the MVP.
  
 For example here is the pseudocode for the move pacman function:
 ```
@@ -99,7 +99,7 @@ I started by creating a div that had `display: grid`. I then added the cells bas
  
 ![code-to-create-cells](https://i.imgur.com/2EwdSup.png)
  
-I then hard coded the cells which needed a wall class to be applied and saved the cell id's to an array. I noticed how long this would take if I was to do multiple levels so I planned to make a function to make this process quicker later on.
+I then hard coded the cells which needed a wall class to be applied and saved the cell id's to an array. I noticed how long this would take if I was to do multiple levels, so I planned to make a function to make this process quicker later on.
  
 I then wrote a function to detect if a cell either contained a wall class or was situated in the middle or edges of the board. If the cell did not fall into these categories it had a 'food' class added.
  
@@ -121,7 +121,7 @@ I also added a `setTimeout()` to release ghosts from the middle and start moving
  
 ### Day 4
  
-I added a collision function that was triggered any time pac man moves into a cell that contained a ‘ghost’ class. It reduces the lives by one and moves Pac-Man to the starting position. If the lives are at zero then it triggers the end game function. The end game function cleared the scores and reset the board.
+I added a collision function that was triggered any time Pac-Man moves into a cell that contained a ‘ghost’ class. It reduces the lives by one and moves Pac-Man to the starting position. If the lives are at zero then it triggers the end game function. The end game function clears the scores and resets the board.
  
 I spent a long time trying to fix a bug where the `setTimeout()` that released the ghosts continued after the game had finished if they had not been released by the end. I spent a lot of time researching setTimeouts and setIntervals and ultimately got a greater understanding of them as a result.
  
@@ -161,7 +161,7 @@ I also added sound effects to the functions that were triggered at different poi
  
 I spent the day cleaning up the project and removing console.logs
  
-I also added a typewriter style animation to the loading screen. This involved getting the text from the DOM and saving it to an array of each thing that needed to be animated. The function then made the innerHTML equal to an empty string and then added each letter individually using a `setTimeout()`. It would then move to the next item in the array. In order to use the same function for animation on the next page. I inserted empty strings into the array of text to be animated and made it so the function stopped when it reached an empty string. This prevented the function from attempting to animate text that had not yet been made visible.
+I also added a typewriter style animation to the loading screen. This involved getting the text from the DOM and saving it to an array of each thing that needed to be animated. The function then made the innerHTML equal to an empty string and added each letter individually using a `setTimeout()`. It would then move to the next item in the array. In order to use the same function for animation on the next page. I inserted empty strings into the array of text to be animated and made it so the function stopped when it reached an empty string. This prevented the function from attempting to animate text that had not yet been made visible.
  
  
 ![code-to-animate-text](https://i.imgur.com/gM0RU1b.png)
@@ -172,18 +172,16 @@ The project was then hosted and deployed using GitHub pages.
  
 ## Challenges
  
-This was my first JavaScript project so it was a steep learning curve with plenty of challenges. Figuring out how to stop the ghosts from continuing to release with setTimeouts once a level had finished took a long time. Also figuring out how to access local storage and manipulate that too was difficult.
- 
+This was my first JavaScript project so it was a steep learning curve with plenty of challenges. Figuring out how to stop the ghosts from continuing to release with setTimeouts once a level had finished took a long time. Also figuring out how to access local storage and manipulate that  was difficult.
+
+## Bugs
+
+The ghosts often get stuck going side to side. This is a result of them only changing direction every time they hit a wall and moving towards a side where Pac-Man is. This can make the levels very difficult to finish.
  
  
 ## Wins
  
 I felt very comfortable with JavaScript and CSS at the end of the process. I was proud of what I had achieved after just 3 weeks of introduction to coding. I was also proud of my function that helped me edit and build the game as it meant that scaling the game up in the future would not be too time-consuming.
- 
-I developed a lot in learning how to find and fix bugs. It taught me to check each stage of building a function so that a bug was immediately dealt with as opposed to waiting until the end of the function and spending a long time figuring out where the problem was.
- 
-I also learned the importance of planning. Whilst I had a good plan for the MVP, when I moved to adding extra features, I started by just getting stuck in straight with the code. This meant I often got lost. By the end, however, I learned to pseudocode ideas from the beginning which made the process a lot cleaner and easier to take step by step.
- 
  
  
 ## Future Features
@@ -191,3 +189,9 @@ I also learned the importance of planning. Whilst I had a good plan for the MVP,
 I would like to add the typewriter animation style to more of the application. As I only started adding it on the last day, I ran out of time to make it uniform across the project.
 
 
+
+## Key Learnings
+
+I developed a lot in learning how to find and fix bugs. It taught me to check each stage of building a function so that a bug was immediately dealt with, as opposed to waiting until the end of the function and spending a long time figuring out where the problem was.
+ 
+I also learned the importance of planning. Whilst I had a good plan for the MVP, when I moved to adding extra features, I started by just getting stuck in straight with the code. This meant I often got lost. By the end, however, I learned to pseudocode ideas from the beginning which made the process a lot cleaner and easier to take step by step.
