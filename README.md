@@ -64,9 +64,9 @@ JavaScript, CSS, HTML
 > * Alert player wins.
 > * Bring up a new board using an array to determine what is a wall corridor and where the ghost classes are.
  
-I also created a basic wire-frame for what the MVP should look like:
+I also created a basic wireframe for what the MVP should look like:
  
-![wire-frame-one](./wireframe/Screenshot%202022-01-07%20at%2010.30.20.png)
+![wireframe-one](./wireframe/Screenshot%202022-01-07%20at%2010.30.20.png)
  
 I then wrote pseudocode in detail for each function, variable and event listener that would be needed to achieve the MVP.
  
